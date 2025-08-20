@@ -2,9 +2,10 @@ import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 // En producción, usar URL relativa para que funcione en el mismo dominio
-const API_URL = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === 'localhost' 
-    ? 'http://localhost:3001/api' 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (window.location.hostname === 'localhost'
+    ? 'http://localhost:3001/api'
     : '/api');
 
 // Create axios instance
@@ -51,6 +52,32 @@ api.interceptors.response.use(
 );
 
 // API Services
+// Servicio de Newsletter
+export const newsletterService = {
+  getSubscribers: async () => {
+    return apiRequest('/newsletter/subscribers');
+  },
+
+  deleteSubscriber: async (id: string) => {
+    return apiRequest(`/newsletter/subscribers/${id}`, { method: 'DELETE' });
+  },
+
+  getCampaigns: async () => {
+    return apiRequest('/newsletter/campaigns');
+  },
+
+  sendCampaign: async (data: {
+    subject: string;
+    content: string;
+    testMode: boolean;
+  }) => {
+    return apiRequest('/newsletter/campaigns/send', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+};
+
 export const authService = {
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),

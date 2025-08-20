@@ -20,6 +20,17 @@ import { ArrowLeft } from 'lucide-react';
 const schema = yup.object({
   title: yup.string().required('Título requerido'),
   description: yup.string().required('Descripción requerida'),
+  type: yup
+    .string()
+    .oneOf([
+      'inmuebles',
+      'vehiculos',
+      'maquinaria',
+      'tecnologia',
+      'arte',
+      'general',
+    ])
+    .required('Tipo requerido'),
   location: yup.string(),
   startingPrice: yup
     .number()
@@ -27,6 +38,10 @@ const schema = yup.object({
     .required('Precio inicial requerido'),
   endDate: yup.string().required('Fecha de finalización requerida'),
   status: yup.string().oneOf(['DRAFT', 'PUBLISHED']).default('DRAFT'),
+  mainImageUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  pdfUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  isFeatured: yup.boolean().default(false),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -60,10 +75,15 @@ export default function AuctionFormPage() {
       reset({
         title: auction.title,
         description: auction.description,
+        type: auction.type || 'general',
         location: auction.location || '',
         startingPrice: Number(auction.startingPrice),
         endDate: new Date(auction.endDate).toISOString().split('T')[0],
         status: auction.status,
+        mainImageUrl: auction.mainImageUrl || '',
+        pdfUrl: auction.pdfUrl || '',
+        youtubeUrl: auction.youtubeUrl || '',
+        isFeatured: auction.isFeatured || false,
       });
     }
   }, [auction, reset]);
@@ -151,6 +171,89 @@ export default function AuctionFormPage() {
                 {...register('location')}
                 disabled={loading}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="type">Tipo de subasta</Label>
+              <select
+                id="type"
+                className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+                {...register('type')}
+                disabled={loading}
+              >
+                <option value="general">General</option>
+                <option value="inmuebles">Inmuebles</option>
+                <option value="vehiculos">Vehículos</option>
+                <option value="maquinaria">Maquinaria</option>
+                <option value="tecnologia">Tecnología</option>
+                <option value="arte">Arte</option>
+              </select>
+              {errors.type && (
+                <p className="text-sm text-destructive">
+                  {errors.type.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="mainImageUrl">URL de imagen principal</Label>
+              <Input
+                id="mainImageUrl"
+                type="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                {...register('mainImageUrl')}
+                disabled={loading}
+              />
+              {errors.mainImageUrl && (
+                <p className="text-sm text-destructive">
+                  {errors.mainImageUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="pdfUrl">URL del PDF descargable</Label>
+              <Input
+                id="pdfUrl"
+                type="url"
+                placeholder="https://ejemplo.com/documento.pdf"
+                {...register('pdfUrl')}
+                disabled={loading}
+              />
+              {errors.pdfUrl && (
+                <p className="text-sm text-destructive">
+                  {errors.pdfUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="youtubeUrl">URL de video de YouTube</Label>
+              <Input
+                id="youtubeUrl"
+                type="url"
+                placeholder="https://youtube.com/watch?v=..."
+                {...register('youtubeUrl')}
+                disabled={loading}
+              />
+              {errors.youtubeUrl && (
+                <p className="text-sm text-destructive">
+                  {errors.youtubeUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="isFeatured"
+                className="h-4 w-4 rounded border-gray-300"
+                {...register('isFeatured')}
+                disabled={loading}
+              />
+              <Label htmlFor="isFeatured" className="text-sm font-normal">
+                Marcar como destacada (aparecerá en la página de inicio)
+              </Label>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">

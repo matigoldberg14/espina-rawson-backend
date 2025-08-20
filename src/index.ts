@@ -16,6 +16,7 @@ import settingsRoutes from './routes/settings.routes';
 import dashboardRoutes from './routes/dashboard.routes';
 import practiceAreaRoutes from './routes/practiceArea.routes';
 import publicRoutes from './routes/public.routes';
+import newsletterRoutes from './routes/newsletter.routes';
 
 // Middlewares
 import { errorHandler } from './middleware/error.middleware';
@@ -98,6 +99,7 @@ app.use('/api/practice-areas', practiceAreaRoutes);
 
 // Rutas públicas (para el frontend)
 app.use('/api/public', publicRoutes);
+app.use('/api/newsletter', newsletterRoutes);
 
 // Middleware de manejo de errores
 app.use(notFound);

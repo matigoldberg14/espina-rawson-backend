@@ -132,23 +132,31 @@ export class AuctionController {
       const {
         title,
         description,
+        type,
         location,
         startingPrice,
         endDate,
         status,
         metadata,
+        youtubeUrl,
+        mainImageUrl,
+        pdfUrl,
       } = req.body;
 
       const auction = await prisma.auction.create({
         data: {
           title,
           description,
+          type: type || 'general',
           location,
           startingPrice,
           currentPrice: startingPrice,
           endDate: new Date(endDate),
           status: status || 'DRAFT',
           metadata,
+          youtubeUrl,
+          mainImageUrl,
+          pdfUrl,
         },
       });
 
@@ -178,11 +186,15 @@ export class AuctionController {
       const {
         title,
         description,
+        type,
         location,
         startingPrice,
         endDate,
         status,
         metadata,
+        youtubeUrl,
+        mainImageUrl,
+        pdfUrl,
       } = req.body;
 
       const auction = await prisma.auction.update({
@@ -190,11 +202,15 @@ export class AuctionController {
         data: {
           title,
           description,
+          type,
           location,
           startingPrice,
           endDate: new Date(endDate),
           status,
           metadata,
+          youtubeUrl,
+          mainImageUrl,
+          pdfUrl,
         },
         include: {
           images: true,

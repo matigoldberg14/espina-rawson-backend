@@ -11,6 +11,7 @@ import {
   LogOut,
   Menu,
   X,
+  Mail,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Contenido', href: '/content', icon: FileText },
   { name: 'Subastas', href: '/auctions', icon: Gavel },
+  { name: 'Newsletter', href: '/newsletter', icon: Mail },
   { name: 'Áreas de Práctica', href: '/practice-areas', icon: Briefcase },
   { name: 'Configuración', href: '/settings', icon: Settings },
   { name: 'Usuarios', href: '/users', icon: Users },
