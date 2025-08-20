@@ -1,0 +1,285 @@
+import { Request, Response, NextFunction } from 'express';
+import { prisma } from '../index';
+
+export class PublicController {
+  getAllContent = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const contents = await prisma.pageContent.findMany({
+        select: {
+          id: true,
+          key: true,
+          value: true,
+          section: true,
+        },
+        orderBy: [{ section: 'asc' }, { key: 'asc' }],
+      });
+
+      // Agrupar por sección para facilitar el uso en el frontend
+      const groupedContent = contents.reduce((acc: any, content) => {
+        if (!acc[content.section]) {
+          acc[content.section] = {};
+        }
+        acc[content.section][content.key] = content.value;
+        return acc;
+      }, {});
+
+      res.json({
+        success: true,
+        data: groupedContent,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getContentBySection = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { section } = req.params;
+
+      const contents = await prisma.pageContent.findMany({
+        where: { section },
+        select: {
+          key: true,
+          value: true,
+        },
+      });
+
+      // Convertir a objeto key-value
+      const contentMap = contents.reduce((acc: any, content) => {
+        acc[content.key] = content.value;
+        return acc;
+      }, {});
+
+      res.json({
+        success: true,
+        data: contentMap,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getActiveAuctions = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { page = 1, limit = 12 } = req.query;
+      const skip = (Number(page) - 1) * Number(limit);
+
+      const where = {
+        status: 'PUBLISHED' as const,
+        endDate: {
+          gt: new Date(),
+        },
+      };
+
+      const [auctions, total] = await Promise.all([
+        prisma.auction.findMany({
+          where,
+          skip,
+          take: Number(limit),
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            location: true,
+            startingPrice: true,
+            currentPrice: true,
+            endDate: true,
+            images: {
+              where: { isPrimary: true },
+              select: {
+                url: true,
+              },
+              take: 1,
+            },
+            _count: {
+              select: { bids: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        }),
+        prisma.auction.count({ where }),
+      ]);
+
+      res.json({
+        success: true,
+        data: auctions,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          pages: Math.ceil(total / Number(limit)),
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getFeaturedAuctions = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const auctions = await prisma.auction.findMany({
+        where: {
+          isFeatured: true,
+          status: 'PUBLISHED',
+          endDate: {
+            gt: new Date(),
+          },
+        },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          location: true,
+          startingPrice: true,
+          currentPrice: true,
+          endDate: true,
+          images: {
+            where: { isPrimary: true },
+            select: {
+              url: true,
+            },
+            take: 1,
+          },
+        },
+        orderBy: { order: 'asc' },
+      });
+
+      res.json({
+        success: true,
+        data: auctions,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getAuctionDetail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const auction = await prisma.auction.findFirst({
+        where: {
+          id,
+          status: 'PUBLISHED',
+        },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          location: true,
+          startingPrice: true,
+          currentPrice: true,
+          endDate: true,
+          metadata: true,
+          images: {
+            select: {
+              id: true,
+              url: true,
+              isPrimary: true,
+            },
+            orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
+          },
+          _count: {
+            select: { bids: true },
+          },
+        },
+      });
+
+      if (!auction) {
+        return res.status(404).json({
+          success: false,
+          error: { message: 'Subasta no encontrada' },
+        });
+      }
+
+      res.json({
+        success: true,
+        data: auction,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPracticeAreas = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const areas = await prisma.practiceArea.findMany({
+        where: { isActive: true },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          icon: true,
+        },
+        orderBy: { order: 'asc' },
+      });
+
+      res.json({
+        success: true,
+        data: areas,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPublicSettings = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // Obtener solo configuraciones públicas
+      const publicKeys = [
+        'contact_email',
+        'contact_phone',
+        'contact_address',
+        'social_links',
+      ];
+
+      const settings = await prisma.settings.findMany({
+        where: {
+          key: { in: publicKeys },
+        },
+        select: {
+          key: true,
+          value: true,
+        },
+      });
+
+      // Convertir a objeto
+      const settingsMap = settings.reduce((acc: any, setting) => {
+        acc[setting.key] = setting.value;
+        return acc;
+      }, {});
+
+      res.json({
+        success: true,
+        data: settingsMap,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}

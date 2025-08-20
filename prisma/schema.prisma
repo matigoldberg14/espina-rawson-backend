@@ -1,0 +1,141 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para usuarios del backoffice
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  password      String
+  name          String
+  role          UserRole      @default(ADMIN)
+  isActive      Boolean       @default(true)
+  lastLogin     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  sessions      Session[]
+  activityLogs  ActivityLog[]
+}
+
+// Modelo para sesiones
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// Modelo para textos de la página
+model PageContent {
+  id          String   @id @default(cuid())
+  key         String   @unique // Clave única para identificar el texto
+  value       String   @db.Text
+  description String?  // Descripción para el admin
+  section     String   // Sección de la página (hero, about, etc.)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Modelo para subastas
+model Auction {
+  id              String          @id @default(cuid())
+  title           String
+  description     String          @db.Text
+  location        String?
+  startingPrice   Decimal         @db.Decimal(10, 2)
+  currentPrice    Decimal?        @db.Decimal(10, 2)
+  endDate         DateTime
+  isFeatured      Boolean         @default(false) // Para las 3 principales
+  status          AuctionStatus   @default(DRAFT)
+  order           Int             @default(0) // Para ordenar las destacadas
+  images          AuctionImage[]
+  bids            Bid[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  metadata        Json?           // Para datos adicionales flexibles
+}
+
+// Modelo para imágenes de subastas
+model AuctionImage {
+  id         String   @id @default(cuid())
+  auctionId  String
+  auction    Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  url        String
+  filename   String
+  isPrimary  Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+// Modelo para pujas (opcional, para futuro)
+model Bid {
+  id         String   @id @default(cuid())
+  auctionId  String
+  auction    Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  amount     Decimal  @db.Decimal(10, 2)
+  bidderName String
+  bidderEmail String
+  bidderPhone String?
+  createdAt  DateTime @default(now())
+}
+
+// Modelo para configuración general
+model Settings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Modelo para logs de actividad
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String   // auction, pageContent, settings, etc.
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+// Modelo para áreas de práctica
+model PracticeArea {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+}
+
+enum AuctionStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  ENDED
+  CANCELLED
+}
