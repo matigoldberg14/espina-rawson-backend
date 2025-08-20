@@ -60,6 +60,11 @@ model Auction {
   status          AuctionStatus   @default(DRAFT)
   order           Int             @default(0) // Para ordenar las destacadas
   mainImageUrl    String?         // Imagen principal
+  secondaryImage1 String?         // Imagen secundaria 1
+  secondaryImage2 String?         // Imagen secundaria 2
+  secondaryImage3 String?         // Imagen secundaria 3
+  secondaryImage4 String?         // Imagen secundaria 4
+  secondaryImage5 String?         // Imagen secundaria 5
   pdfUrl          String?         // PDF descargable
   youtubeUrl      String?         // Video de YouTube
   images          AuctionImage[]

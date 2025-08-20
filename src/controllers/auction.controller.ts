@@ -140,6 +140,11 @@ export class AuctionController {
         metadata,
         youtubeUrl,
         mainImageUrl,
+        secondaryImage1,
+        secondaryImage2,
+        secondaryImage3,
+        secondaryImage4,
+        secondaryImage5,
         pdfUrl,
       } = req.body;
 
@@ -156,6 +161,11 @@ export class AuctionController {
           metadata,
           youtubeUrl,
           mainImageUrl,
+          secondaryImage1,
+          secondaryImage2,
+          secondaryImage3,
+          secondaryImage4,
+          secondaryImage5,
           pdfUrl,
         },
       });
@@ -194,6 +204,11 @@ export class AuctionController {
         metadata,
         youtubeUrl,
         mainImageUrl,
+        secondaryImage1,
+        secondaryImage2,
+        secondaryImage3,
+        secondaryImage4,
+        secondaryImage5,
         pdfUrl,
       } = req.body;
 
@@ -210,6 +225,11 @@ export class AuctionController {
           metadata,
           youtubeUrl,
           mainImageUrl,
+          secondaryImage1,
+          secondaryImage2,
+          secondaryImage3,
+          secondaryImage4,
+          secondaryImage5,
           pdfUrl,
         },
         include: {

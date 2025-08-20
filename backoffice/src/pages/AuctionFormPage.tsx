@@ -39,6 +39,11 @@ const schema = yup.object({
   endDate: yup.string().required('Fecha de finalización requerida'),
   status: yup.string().oneOf(['DRAFT', 'PUBLISHED']).default('DRAFT'),
   mainImageUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  secondaryImage1: yup.string().url('Debe ser una URL válida').nullable(),
+  secondaryImage2: yup.string().url('Debe ser una URL válida').nullable(),
+  secondaryImage3: yup.string().url('Debe ser una URL válida').nullable(),
+  secondaryImage4: yup.string().url('Debe ser una URL válida').nullable(),
+  secondaryImage5: yup.string().url('Debe ser una URL válida').nullable(),
   pdfUrl: yup.string().url('Debe ser una URL válida').nullable(),
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
   isFeatured: yup.boolean().default(false),
@@ -209,6 +214,90 @@ export default function AuctionFormPage() {
                   {errors.mainImageUrl.message}
                 </p>
               )}
+            </div>
+
+            <div className="space-y-4">
+              <Label>Imágenes secundarias (hasta 5)</Label>
+              
+              <div className="space-y-2">
+                <Label htmlFor="secondaryImage1">Imagen secundaria 1</Label>
+                <Input
+                  id="secondaryImage1"
+                  type="url"
+                  placeholder="https://ejemplo.com/imagen2.jpg"
+                  {...register('secondaryImage1')}
+                  disabled={loading}
+                />
+                {errors.secondaryImage1 && (
+                  <p className="text-sm text-destructive">
+                    {errors.secondaryImage1.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="secondaryImage2">Imagen secundaria 2</Label>
+                <Input
+                  id="secondaryImage2"
+                  type="url"
+                  placeholder="https://ejemplo.com/imagen3.jpg"
+                  {...register('secondaryImage2')}
+                  disabled={loading}
+                />
+                {errors.secondaryImage2 && (
+                  <p className="text-sm text-destructive">
+                    {errors.secondaryImage2.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="secondaryImage3">Imagen secundaria 3</Label>
+                <Input
+                  id="secondaryImage3"
+                  type="url"
+                  placeholder="https://ejemplo.com/imagen4.jpg"
+                  {...register('secondaryImage3')}
+                  disabled={loading}
+                />
+                {errors.secondaryImage3 && (
+                  <p className="text-sm text-destructive">
+                    {errors.secondaryImage3.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="secondaryImage4">Imagen secundaria 4</Label>
+                <Input
+                  id="secondaryImage4"
+                  type="url"
+                  placeholder="https://ejemplo.com/imagen5.jpg"
+                  {...register('secondaryImage4')}
+                  disabled={loading}
+                />
+                {errors.secondaryImage4 && (
+                  <p className="text-sm text-destructive">
+                    {errors.secondaryImage4.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="secondaryImage5">Imagen secundaria 5</Label>
+                <Input
+                  id="secondaryImage5"
+                  type="url"
+                  placeholder="https://ejemplo.com/imagen6.jpg"
+                  {...register('secondaryImage5')}
+                  disabled={loading}
+                />
+                {errors.secondaryImage5 && (
+                  <p className="text-sm text-destructive">
+                    {errors.secondaryImage5.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
