@@ -92,6 +92,11 @@ export class PublicController {
             startingPrice: true,
             currentPrice: true,
             endDate: true,
+            mainImageUrl: true,
+            pdfUrl: true,
+            youtubeUrl: true,
+            type: true,
+            isFeatured: true,
             images: {
               where: { isPrimary: true },
               select: {
@@ -187,6 +192,11 @@ export class PublicController {
           startingPrice: true,
           currentPrice: true,
           endDate: true,
+          mainImageUrl: true,
+          pdfUrl: true,
+          youtubeUrl: true,
+          type: true,
+          isFeatured: true,
           metadata: true,
           images: {
             select: {

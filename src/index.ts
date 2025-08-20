@@ -45,6 +45,10 @@ app.use(
     crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
+
+// Servir archivos estáticos desde public
+app.use(express.static(path.join(__dirname, '../public')));
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:4321',
