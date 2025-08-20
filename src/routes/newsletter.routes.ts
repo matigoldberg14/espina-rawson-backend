@@ -27,7 +27,7 @@ router.post(
 router.get(
   '/subscribers',
   authenticate,
-  authorize(['SUPER_ADMIN', 'ADMIN']),
+  authorize('SUPER_ADMIN', 'ADMIN'),
   query('active').optional().isBoolean(),
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
@@ -38,7 +38,7 @@ router.get(
 router.delete(
   '/subscribers/:id',
   authenticate,
-  authorize(['SUPER_ADMIN', 'ADMIN']),
+  authorize('SUPER_ADMIN', 'ADMIN'),
   param('id').isString(),
   validate,
   newsletterController.deleteSubscriber
@@ -47,7 +47,7 @@ router.delete(
 router.get(
   '/campaigns',
   authenticate,
-  authorize(['SUPER_ADMIN', 'ADMIN']),
+  authorize('SUPER_ADMIN', 'ADMIN'),
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
   validate,
@@ -57,7 +57,7 @@ router.get(
 router.post(
   '/campaigns/send',
   authenticate,
-  authorize(['SUPER_ADMIN', 'ADMIN']),
+  authorize('SUPER_ADMIN', 'ADMIN'),
   body('subject').isString().notEmpty(),
   body('content').isString().notEmpty(),
   body('testMode').optional().isBoolean(),
