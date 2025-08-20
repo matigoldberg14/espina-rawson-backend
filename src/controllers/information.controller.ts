@@ -5,19 +5,20 @@ const prisma = new PrismaClient();
 
 export class InformationController {
   // Obtener toda la información activa
-  getAllInformation = async (req: Request, res: Response, next: NextFunction) => {
+  getAllInformation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const information = await prisma.information.findMany({
         where: { isActive: true },
-        orderBy: [
-          { order: 'asc' },
-          { publishDate: 'desc' }
-        ]
+        orderBy: [{ order: 'asc' }, { publishDate: 'desc' }],
       });
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -25,24 +26,25 @@ export class InformationController {
   };
 
   // Obtener información por tipo
-  getInformationByType = async (req: Request, res: Response, next: NextFunction) => {
+  getInformationByType = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { type } = req.params;
-      
+
       const information = await prisma.information.findMany({
-        where: { 
+        where: {
           type: type.toUpperCase() as any,
-          isActive: true 
+          isActive: true,
         },
-        orderBy: [
-          { order: 'asc' },
-          { publishDate: 'desc' }
-        ]
+        orderBy: [{ order: 'asc' }, { publishDate: 'desc' }],
       });
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -50,24 +52,25 @@ export class InformationController {
   };
 
   // Obtener información por categoría
-  getInformationByCategory = async (req: Request, res: Response, next: NextFunction) => {
+  getInformationByCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { category } = req.params;
-      
+
       const information = await prisma.information.findMany({
-        where: { 
+        where: {
           category: category,
-          isActive: true 
+          isActive: true,
         },
-        orderBy: [
-          { order: 'asc' },
-          { publishDate: 'desc' }
-        ]
+        orderBy: [{ order: 'asc' }, { publishDate: 'desc' }],
       });
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -75,24 +78,28 @@ export class InformationController {
   };
 
   // Obtener información por ID
-  getInformationById = async (req: Request, res: Response, next: NextFunction) => {
+  getInformationById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { id } = req.params;
-      
+
       const information = await prisma.information.findUnique({
-        where: { id }
+        where: { id },
       });
 
       if (!information) {
         return res.status(404).json({
           success: false,
-          error: { message: 'Información no encontrada' }
+          error: { message: 'Información no encontrada' },
         });
       }
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -100,7 +107,11 @@ export class InformationController {
   };
 
   // Crear nueva información
-  createInformation = async (req: Request, res: Response, next: NextFunction) => {
+  createInformation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const {
         title,
@@ -112,7 +123,7 @@ export class InformationController {
         publishDate,
         tags,
         category,
-        order
+        order,
       } = req.body;
 
       const information = await prisma.information.create({
@@ -126,13 +137,13 @@ export class InformationController {
           publishDate: new Date(publishDate),
           tags: tags || [],
           category,
-          order: order || 0
-        }
+          order: order || 0,
+        },
       });
 
       res.status(201).json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -140,7 +151,11 @@ export class InformationController {
   };
 
   // Actualizar información
-  updateInformation = async (req: Request, res: Response, next: NextFunction) => {
+  updateInformation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { id } = req.params;
       const {
@@ -154,7 +169,7 @@ export class InformationController {
         tags,
         category,
         order,
-        isActive
+        isActive,
       } = req.body;
 
       const information = await prisma.information.update({
@@ -170,13 +185,13 @@ export class InformationController {
           tags: tags || undefined,
           category,
           order: order || undefined,
-          isActive
-        }
+          isActive,
+        },
       });
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
@@ -184,17 +199,21 @@ export class InformationController {
   };
 
   // Eliminar información
-  deleteInformation = async (req: Request, res: Response, next: NextFunction) => {
+  deleteInformation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { id } = req.params;
-      
+
       await prisma.information.delete({
-        where: { id }
+        where: { id },
       });
 
       res.json({
         success: true,
-        message: 'Información eliminada correctamente'
+        message: 'Información eliminada correctamente',
       });
     } catch (error) {
       next(error);
@@ -202,29 +221,33 @@ export class InformationController {
   };
 
   // Cambiar estado activo/inactivo
-  toggleInformationStatus = async (req: Request, res: Response, next: NextFunction) => {
+  toggleInformationStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const { id } = req.params;
-      
+
       const currentInfo = await prisma.information.findUnique({
-        where: { id }
+        where: { id },
       });
 
       if (!currentInfo) {
         return res.status(404).json({
           success: false,
-          error: { message: 'Información no encontrada' }
+          error: { message: 'Información no encontrada' },
         });
       }
 
       const information = await prisma.information.update({
         where: { id },
-        data: { isActive: !currentInfo.isActive }
+        data: { isActive: !currentInfo.isActive },
       });
 
       res.json({
         success: true,
-        data: information
+        data: information,
       });
     } catch (error) {
       next(error);
