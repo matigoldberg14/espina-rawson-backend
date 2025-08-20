@@ -16,7 +16,7 @@ import {
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
 
-// Updated: 2025-08-20 17:45 - Force rebuild with Newsletter
+// Updated: 2025-08-20 22:15 - FORCE REBUILD with Images Support
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Contenido', href: '/content', icon: FileText },
