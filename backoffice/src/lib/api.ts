@@ -55,15 +55,15 @@ api.interceptors.response.use(
 // Servicio de Newsletter
 export const newsletterService = {
   getSubscribers: async () => {
-    return apiRequest('/newsletter/subscribers');
+    return api.get('/newsletter/subscribers');
   },
 
   deleteSubscriber: async (id: string) => {
-    return apiRequest(`/newsletter/subscribers/${id}`, { method: 'DELETE' });
+    return api.delete(`/newsletter/subscribers/${id}`);
   },
 
   getCampaigns: async () => {
-    return apiRequest('/newsletter/campaigns');
+    return api.get('/newsletter/campaigns');
   },
 
   sendCampaign: async (data: {
@@ -71,10 +71,7 @@ export const newsletterService = {
     content: string;
     testMode: boolean;
   }) => {
-    return apiRequest('/newsletter/campaigns/send', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+    return api.post('/newsletter/campaigns/send', data);
   },
 };
 
