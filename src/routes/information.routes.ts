@@ -1,6 +1,6 @@
 import express from 'express';
 import { InformationController } from '../controllers/information.controller';
-import { authenticateToken } from '../middleware/auth.middleware';
+import { authenticate } from '../middleware/auth.middleware';
 
 const router = express.Router();
 const informationController = new InformationController();
@@ -15,16 +15,16 @@ router.get(
 router.get('/:id', informationController.getInformationById);
 
 // Rutas protegidas (requieren autenticación)
-router.post('/', authenticateToken, informationController.createInformation);
-router.put('/:id', authenticateToken, informationController.updateInformation);
+router.post('/', authenticate, informationController.createInformation);
+router.put('/:id', authenticate, informationController.updateInformation);
 router.delete(
   '/:id',
-  authenticateToken,
+  authenticate,
   informationController.deleteInformation
 );
 router.patch(
   '/:id/toggle',
-  authenticateToken,
+  authenticate,
   informationController.toggleInformationStatus
 );
 
