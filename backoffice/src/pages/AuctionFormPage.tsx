@@ -218,7 +218,7 @@ export default function AuctionFormPage() {
 
             <div className="space-y-4">
               <Label>Imágenes secundarias (hasta 5)</Label>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="secondaryImage1">Imagen secundaria 1</Label>
                 <Input
