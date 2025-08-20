@@ -117,9 +117,11 @@ async function startServer() {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // Iniciar servidor
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    // Iniciar servidor - Escuchar en 0.0.0.0 para Railway
+    const HOST = '0.0.0.0';
+    const port = typeof PORT === 'string' ? parseInt(PORT, 10) : PORT;
+    app.listen(port, HOST, () => {
+      console.log(`🚀 Servidor corriendo en http://${HOST}:${port}`);
       console.log(`📝 Ambiente: ${process.env.NODE_ENV}`);
       console.log(`🔒 CORS habilitado para: ${process.env.FRONTEND_URL}`);
     });
