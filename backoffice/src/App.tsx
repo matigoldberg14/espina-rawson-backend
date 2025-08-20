@@ -32,7 +32,7 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
+      <Router basename="/backoffice">
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
