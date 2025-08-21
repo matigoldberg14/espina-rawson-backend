@@ -17,6 +17,8 @@ import ContentPage from './pages/ContentPage';
 import AuctionsPage from './pages/AuctionsPage';
 import AuctionFormPage from './pages/AuctionFormPage';
 import PracticeAreasPage from './pages/PracticeAreasPage';
+import TeamMembersPage from './pages/TeamMembersPage';
+import StudioContentPage from './pages/StudioContentPage';
 import SettingsPage from './pages/SettingsPage';
 import UsersPage from './pages/UsersPage';
 import NewsletterPage from './pages/NewsletterPage';
@@ -54,6 +56,8 @@ function App() {
                   element={<AuctionFormPage />}
                 />
                 <Route path="/practice-areas" element={<PracticeAreasPage />} />
+                <Route path="/team-members" element={<TeamMembersPage />} />
+                <Route path="/studio-content" element={<StudioContentPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/newsletter" element={<NewsletterPage />} />

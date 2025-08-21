@@ -17,7 +17,7 @@ import {
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
 
-// Updated: 2025-08-20 22:15 - FORCE REBUILD with Images Support
+// Updated: 2025-08-21 17:00 - Added Studio Management sections
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Contenido', href: '/content', icon: FileText },
@@ -25,6 +25,8 @@ const navigation = [
   { name: 'Información', href: '/information', icon: Info },
   { name: 'Newsletter', href: '/newsletter', icon: Mail },
   { name: 'Áreas de Práctica', href: '/practice-areas', icon: Briefcase },
+  { name: 'Equipo del Estudio', href: '/team-members', icon: Users },
+  { name: 'Contenido del Estudio', href: '/studio-content', icon: FileText },
   { name: 'Configuración', href: '/settings', icon: Settings },
   { name: 'Usuarios', href: '/users', icon: Users },
 ];

@@ -1,62 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Eye, EyeOff, GripVertical } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, EyeOff, Linkedin, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
 import { Label } from '../components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
+import { Card, CardContent } from '../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from '../hooks/use-toast';
 
-interface PracticeArea {
+interface TeamMember {
   id: string;
-  title: string;
-  description: string;
-  icon: string;
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  linkedin?: string;
   order: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-interface CreatePracticeAreaData {
-  title: string;
-  description: string;
-  icon: string;
+interface CreateTeamMemberData {
+  name: string;
+  role: string;
+  bio: string;
+  image: string;
+  linkedin?: string;
   order: number;
   isActive: boolean;
 }
 
-const ICON_OPTIONS = [
-  'Briefcase', 'Gavel', 'Scale', 'Shield', 'Building', 'Factory',
-  'Users', 'FileText', 'BookOpen', 'Award', 'Target', 'TrendingUp',
-  'Zap', 'Star', 'Heart', 'Globe', 'MapPin', 'Phone', 'Mail'
-];
-
-const PracticeAreasPage: React.FC = () => {
-  const [practiceAreas, setPracticeAreas] = useState<PracticeArea[]>([]);
+const TeamMembersPage: React.FC = () => {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [editingArea, setEditingArea] = useState<PracticeArea | null>(null);
-  const [formData, setFormData] = useState<CreatePracticeAreaData>({
-    title: '',
-    description: '',
-    icon: 'Briefcase',
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [formData, setFormData] = useState<CreateTeamMemberData>({
+    name: '',
+    role: '',
+    bio: '',
+    image: '',
+    linkedin: '',
     order: 0,
     isActive: true,
   });
 
   useEffect(() => {
-    fetchPracticeAreas();
+    fetchTeamMembers();
   }, []);
 
-  const fetchPracticeAreas = async () => {
+  const fetchTeamMembers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/practice-areas/admin', {
+      const response = await fetch('/api/team-members/admin', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -64,15 +63,15 @@ const PracticeAreasPage: React.FC = () => {
       
       if (response.ok) {
         const data = await response.json();
-        setPracticeAreas(data.data || []);
+        setTeamMembers(data.data || []);
       } else {
-        throw new Error('Error al cargar áreas de práctica');
+        throw new Error('Error al cargar miembros del equipo');
       }
     } catch (error) {
-      console.error('Error fetching practice areas:', error);
+      console.error('Error fetching team members:', error);
       toast({
         title: "Error",
-        description: "No se pudieron cargar las áreas de práctica",
+        description: "No se pudieron cargar los miembros del equipo",
         variant: "destructive",
       });
     } finally {
@@ -84,11 +83,11 @@ const PracticeAreasPage: React.FC = () => {
     e.preventDefault();
     
     try {
-      const url = editingArea 
-        ? `/api/practice-areas/${editingArea.id}`
-        : '/api/practice-areas';
+      const url = editingMember 
+        ? `/api/team-members/${editingMember.id}`
+        : '/api/team-members';
       
-      const method = editingArea ? 'PUT' : 'POST';
+      const method = editingMember ? 'PUT' : 'POST';
       
       const response = await fetch(url, {
         method,
@@ -103,20 +102,20 @@ const PracticeAreasPage: React.FC = () => {
         const data = await response.json();
         toast({
           title: "Éxito",
-          description: editingArea 
-            ? "Área de práctica actualizada correctamente"
-            : "Área de práctica creada correctamente",
+          description: editingMember 
+            ? "Miembro del equipo actualizado correctamente"
+            : "Miembro del equipo creado correctamente",
         });
         
         setIsCreateDialogOpen(false);
-        setEditingArea(null);
+        setEditingMember(null);
         resetForm();
-        fetchPracticeAreas();
+        fetchTeamMembers();
       } else {
         throw new Error('Error en la operación');
       }
     } catch (error) {
-      console.error('Error submitting practice area:', error);
+      console.error('Error submitting team member:', error);
       toast({
         title: "Error",
         description: "No se pudo completar la operación",
@@ -125,21 +124,23 @@ const PracticeAreasPage: React.FC = () => {
     }
   };
 
-  const handleEdit = (area: PracticeArea) => {
-    setEditingArea(area);
+  const handleEdit = (member: TeamMember) => {
+    setEditingMember(member);
     setFormData({
-      title: area.title,
-      description: area.description,
-      icon: area.icon,
-      order: area.order,
-      isActive: area.isActive,
+      name: member.name,
+      role: member.role,
+      bio: member.bio,
+      image: member.image,
+      linkedin: member.linkedin || '',
+      order: member.order,
+      isActive: member.isActive,
     });
     setIsCreateDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/practice-areas/${id}`, {
+      const response = await fetch(`/api/team-members/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -149,44 +150,44 @@ const PracticeAreasPage: React.FC = () => {
       if (response.ok) {
         toast({
           title: "Éxito",
-          description: "Área de práctica eliminada correctamente",
+          description: "Miembro del equipo eliminado correctamente",
         });
-        fetchPracticeAreas();
+        fetchTeamMembers();
       } else {
         throw new Error('Error al eliminar');
       }
     } catch (error) {
-      console.error('Error deleting practice area:', error);
+      console.error('Error deleting team member:', error);
       toast({
         title: "Error",
-        description: "No se pudo eliminar el área de práctica",
+        description: "No se pudo eliminar el miembro del equipo",
         variant: "destructive",
       });
     }
   };
 
-  const handleToggleActive = async (area: PracticeArea) => {
+  const handleToggleActive = async (member: TeamMember) => {
     try {
-      const response = await fetch(`/api/practice-areas/${area.id}`, {
+      const response = await fetch(`/api/team-members/${member.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ isActive: !area.isActive })
+        body: JSON.stringify({ isActive: !member.isActive })
       });
 
       if (response.ok) {
         toast({
           title: "Éxito",
-          description: `Área de práctica ${!area.isActive ? 'activada' : 'desactivada'} correctamente`,
+          description: `Miembro del equipo ${!member.isActive ? 'activado' : 'desactivado'} correctamente`,
         });
-        fetchPracticeAreas();
+        fetchTeamMembers();
       } else {
         throw new Error('Error al actualizar');
       }
     } catch (error) {
-      console.error('Error toggling practice area:', error);
+      console.error('Error toggling team member:', error);
       toast({
         title: "Error",
         description: "No se pudo actualizar el estado",
@@ -197,16 +198,18 @@ const PracticeAreasPage: React.FC = () => {
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
-      icon: 'Briefcase',
+      name: '',
+      role: '',
+      bio: '',
+      image: '',
+      linkedin: '',
       order: 0,
       isActive: true,
     });
   };
 
   const openCreateDialog = () => {
-    setEditingArea(null);
+    setEditingMember(null);
     resetForm();
     setIsCreateDialogOpen(true);
   };
@@ -216,7 +219,7 @@ const PracticeAreasPage: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Cargando áreas de práctica...</p>
+          <p className="mt-4 text-muted-foreground">Cargando miembros del equipo...</p>
         </div>
       </div>
     );
@@ -226,30 +229,46 @@ const PracticeAreasPage: React.FC = () => {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold">Áreas de Práctica</h1>
-          <p className="text-muted-foreground">Gestiona las áreas de práctica del estudio</p>
+          <h1 className="text-3xl font-bold">Miembros del Equipo</h1>
+          <p className="text-muted-foreground">Gestiona el equipo del estudio</p>
         </div>
         <Button onClick={openCreateDialog} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          Nueva Área
+          Nuevo Miembro
         </Button>
       </div>
 
       <div className="grid gap-4">
-        {practiceAreas.map((area) => (
-          <Card key={area.id} className={!area.isActive ? 'opacity-60' : ''}>
+        {teamMembers.map((member) => (
+          <Card key={member.id} className={!member.isActive ? 'opacity-60' : ''}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="bg-primary/10 p-3 rounded-lg">
-                    <span className="text-primary font-semibold">{area.icon}</span>
+                  <div className="relative h-20 w-20 rounded-full overflow-hidden border-2 border-primary">
+                    <img
+                      src={member.image || '/placeholder.svg'}
+                      alt={member.name}
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">{area.title}</h3>
-                    <p className="text-muted-foreground">{area.description}</p>
+                    <h3 className="text-xl font-semibold">{member.name}</h3>
+                    <p className="text-primary font-semibold">{member.role}</p>
+                    <p className="text-muted-foreground text-sm max-w-md">{member.bio}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                      <span>Orden: {area.order}</span>
-                      <span>Estado: {area.isActive ? 'Activo' : 'Inactivo'}</span>
+                      <span>Orden: {member.order}</span>
+                      <span>Estado: {member.isActive ? 'Activo' : 'Inactivo'}</span>
+                      {member.linkedin && (
+                        <a
+                          href={member.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-primary hover:underline"
+                        >
+                          <Linkedin className="h-3 w-3" />
+                          LinkedIn
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -257,14 +276,14 @@ const PracticeAreasPage: React.FC = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleToggleActive(area)}
+                    onClick={() => handleToggleActive(member)}
                   >
-                    {area.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    {member.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEdit(area)}
+                    onClick={() => handleEdit(member)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -278,12 +297,12 @@ const PracticeAreasPage: React.FC = () => {
                       <AlertDialogHeader>
                         <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Esta acción no se puede deshacer. Se eliminará permanentemente el área de práctica.
+                          Esta acción no se puede deshacer. Se eliminará permanentemente el miembro del equipo.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(area.id)}>
+                        <AlertDialogAction onClick={() => handleDelete(member.id)}>
                           Eliminar
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -300,48 +319,65 @@ const PracticeAreasPage: React.FC = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingArea ? 'Editar Área de Práctica' : 'Nueva Área de Práctica'}
+              {editingMember ? 'Editar Miembro del Equipo' : 'Nuevo Miembro del Equipo'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="title">Título *</Label>
+                <Label htmlFor="name">Nombre *</Label>
                 <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Derecho Corporativo y M&A"
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Juan Carlos Espina"
                   required
                 />
               </div>
               <div>
-                <Label htmlFor="icon">Icono *</Label>
-                <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar icono" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {ICON_OPTIONS.map((icon) => (
-                      <SelectItem key={icon} value={icon}>
-                        {icon}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="role">Rol *</Label>
+                <Input
+                  id="role"
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  placeholder="Socio Fundador"
+                  required
+                />
               </div>
             </div>
             
             <div>
-              <Label htmlFor="description">Descripción *</Label>
+              <Label htmlFor="bio">Biografía *</Label>
               <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Asesoramiento en fusiones, adquisiciones, gobierno corporativo..."
+                id="bio"
+                value={formData.bio}
+                onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+                placeholder="Con más de 50 años de experiencia..."
                 rows={3}
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="image">URL de la Imagen *</Label>
+                <Input
+                  id="image"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  placeholder="https://example.com/photo.jpg"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="linkedin">URL de LinkedIn</Label>
+                <Input
+                  id="linkedin"
+                  value={formData.linkedin}
+                  onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                  placeholder="https://linkedin.com/in/username"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -371,14 +407,14 @@ const PracticeAreasPage: React.FC = () => {
                 variant="outline"
                 onClick={() => {
                   setIsCreateDialogOpen(false);
-                  setEditingArea(null);
+                  setEditingMember(null);
                   resetForm();
                 }}
               >
                 Cancelar
               </Button>
               <Button type="submit">
-                {editingArea ? 'Actualizar' : 'Crear'}
+                {editingMember ? 'Actualizar' : 'Crear'}
               </Button>
             </div>
           </form>
@@ -388,4 +424,4 @@ const PracticeAreasPage: React.FC = () => {
   );
 };
 
-export default PracticeAreasPage;
+export default TeamMembersPage;

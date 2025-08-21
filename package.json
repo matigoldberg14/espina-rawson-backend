@@ -1,11 +1,11 @@
 {
   "name": "espina-rawson-backend",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
     "build": "prisma generate && tsc && cd backoffice && rm -rf node_modules dist && npm ci && npm run build && cd ..",
-    "start": "prisma db push --accept-data-loss && npx ts-node prisma/seed-real-original.ts && node dist/index.js",
+    "start": "prisma db push --accept-data-loss && npx ts-node prisma/seed-real-original.ts && npx ts-node prisma/seed-studio.ts && node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",

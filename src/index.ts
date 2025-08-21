@@ -14,7 +14,9 @@ import contentRoutes from './routes/content.routes';
 import auctionRoutes from './routes/auction.routes';
 import settingsRoutes from './routes/settings.routes';
 import dashboardRoutes from './routes/dashboard.routes';
-import practiceAreaRoutes from './routes/practiceArea.routes';
+import practiceAreaRoutes from './routes/practiceAreas';
+import teamMemberRoutes from './routes/teamMembers';
+import studioContentRoutes from './routes/studioContent';
 import informationRoutes from './routes/information.routes';
 import publicRoutes from './routes/public.routes';
 import newsletterRoutes from './routes/newsletter.routes';
@@ -101,6 +103,8 @@ app.use('/api/auctions', auctionRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/practice-areas', practiceAreaRoutes);
+app.use('/api/team-members', teamMemberRoutes);
+app.use('/api/studio-content', studioContentRoutes);
 app.use('/api/information', informationRoutes);
 
 // Rutas públicas (para el frontend)

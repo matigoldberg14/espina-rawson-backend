@@ -156,6 +156,38 @@ model PracticeArea {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("practice_areas")
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  name     String
+  role     String
+  bio      String
+  image    String   // URL de la imagen
+  linkedin String?  // URL de LinkedIn
+  order    Int      @default(0)
+  isActive Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+model StudioContent {
+  id          String   @id @default(cuid())
+  section     String   // 'hero', 'history', 'clients_intro'
+  title       String?
+  subtitle    String?
+  content     String   // Texto principal
+  image       String?  // URL de imagen opcional
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("studio_content")
 }
 
 // Modelo para contenido informativo
