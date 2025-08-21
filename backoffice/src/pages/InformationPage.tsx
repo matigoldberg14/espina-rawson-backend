@@ -28,10 +28,29 @@ import {
   TableRow,
 } from '../components/ui/table';
 import { Badge } from '../components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '../components/ui/tabs';
 import { informationService } from '../lib/api';
-import { Plus, Edit, Trash2, Eye, FileText, Video, Image, ExternalLink } from 'lucide-react';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  FileText,
+  Video,
+  Image,
+  ExternalLink,
+} from 'lucide-react';
 
 interface Information {
   id: string;
@@ -92,7 +111,10 @@ const InformationPage: React.FC = () => {
     try {
       const data = {
         ...formData,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(Boolean),
+        tags: formData.tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean),
         publishDate: new Date(formData.publishDate).toISOString(),
       };
 
@@ -129,7 +151,9 @@ const InformationPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este elemento?')) {
+    if (
+      window.confirm('¿Estás seguro de que quieres eliminar este elemento?')
+    ) {
       try {
         await informationService.delete(id);
         await fetchInformation();
@@ -182,25 +206,29 @@ const InformationPage: React.FC = () => {
     }
   };
 
-  const filteredInformation = information.filter(item => {
+  const filteredInformation = information.filter((item) => {
     if (activeTab === 'all') return true;
     return item.type.toLowerCase() === activeTab;
   });
 
   const stats = {
     total: information.length,
-    articles: information.filter(item => item.type === 'ARTICLE').length,
-    videos: information.filter(item => item.type === 'VIDEO').length,
-    images: information.filter(item => item.type === 'IMAGE').length,
-    active: information.filter(item => item.isActive).length,
+    articles: information.filter((item) => item.type === 'ARTICLE').length,
+    videos: information.filter((item) => item.type === 'VIDEO').length,
+    images: information.filter((item) => item.type === 'IMAGE').length,
+    active: information.filter((item) => item.isActive).length,
   };
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Gestión de Información</h1>
-          <p className="text-gray-600">Administra artículos, videos e imágenes para la sección informativa</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Gestión de Información
+          </h1>
+          <p className="text-gray-600">
+            Administra artículos, videos e imágenes para la sección informativa
+          </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -212,10 +240,13 @@ const InformationPage: React.FC = () => {
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingItem ? 'Editar Información' : 'Agregar Nueva Información'}
+                {editingItem
+                  ? 'Editar Información'
+                  : 'Agregar Nueva Información'}
               </DialogTitle>
               <DialogDescription>
-                Completa los campos para {editingItem ? 'actualizar' : 'crear'} el elemento informativo.
+                Completa los campos para {editingItem ? 'actualizar' : 'crear'}{' '}
+                el elemento informativo.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -225,7 +256,9 @@ const InformationPage: React.FC = () => {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -233,7 +266,9 @@ const InformationPage: React.FC = () => {
                   <Label htmlFor="type">Tipo *</Label>
                   <Select
                     value={formData.type}
-                    onValueChange={(value) => setFormData({ ...formData, type: value as any })}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, type: value as any })
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -267,7 +302,9 @@ const InformationPage: React.FC = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   required
                 />
@@ -279,13 +316,17 @@ const InformationPage: React.FC = () => {
                   <Input
                     id="url"
                     value={formData.url}
-                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, url: e.target.value })
+                    }
                     placeholder="https://example.com/archivo.pdf"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     {formData.type === 'ARTICLE' && 'URL del PDF o artículo'}
-                    {formData.type === 'VIDEO' && 'URL del video (YouTube, Vimeo, etc.)'}
-                    {formData.type === 'IMAGE' && 'URL de la galería o imagen principal'}
+                    {formData.type === 'VIDEO' &&
+                      'URL del video (YouTube, Vimeo, etc.)'}
+                    {formData.type === 'IMAGE' &&
+                      'URL de la galería o imagen principal'}
                   </p>
                 </div>
                 <div>
@@ -293,7 +334,9 @@ const InformationPage: React.FC = () => {
                   <Input
                     id="thumbnail"
                     value={formData.thumbnail}
-                    onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, thumbnail: e.target.value })
+                    }
                     placeholder="https://example.com/thumbnail.jpg"
                   />
                 </div>
@@ -305,7 +348,9 @@ const InformationPage: React.FC = () => {
                   <Input
                     id="author"
                     value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, author: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -315,7 +360,9 @@ const InformationPage: React.FC = () => {
                     id="publishDate"
                     type="date"
                     value={formData.publishDate}
-                    onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, publishDate: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -327,7 +374,9 @@ const InformationPage: React.FC = () => {
                   <Input
                     id="category"
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
                     placeholder="Ej: Subastas, Legal, Educativo"
                     required
                   />
@@ -338,7 +387,12 @@ const InformationPage: React.FC = () => {
                     id="order"
                     type="number"
                     value={formData.order}
-                    onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        order: parseInt(e.target.value) || 0,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -348,7 +402,9 @@ const InformationPage: React.FC = () => {
                 <Input
                   id="tags"
                   value={formData.tags}
-                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tags: e.target.value })
+                  }
                   placeholder="subasta, legal, tutorial"
                 />
               </div>
@@ -357,13 +413,19 @@ const InformationPage: React.FC = () => {
                 <Switch
                   id="isActive"
                   checked={formData.isActive}
-                  onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, isActive: checked })
+                  }
                 />
                 <Label htmlFor="isActive">Elemento activo</Label>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Cancelar
                 </Button>
                 <Button type="submit">

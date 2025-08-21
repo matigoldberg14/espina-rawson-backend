@@ -195,19 +195,22 @@ export const informationService = {
     order: number;
   }) => api.post('/information', data),
 
-  update: (id: string, data: {
-    title?: string;
-    description?: string;
-    type?: 'ARTICLE' | 'VIDEO' | 'IMAGE';
-    url?: string;
-    thumbnail?: string;
-    author?: string;
-    publishDate?: string;
-    tags?: string[];
-    category?: string;
-    isActive?: boolean;
-    order?: number;
-  }) => api.put(`/information/${id}`, data),
+  update: (
+    id: string,
+    data: {
+      title?: string;
+      description?: string;
+      type?: 'ARTICLE' | 'VIDEO' | 'IMAGE';
+      url?: string;
+      thumbnail?: string;
+      author?: string;
+      publishDate?: string;
+      tags?: string[];
+      category?: string;
+      isActive?: boolean;
+      order?: number;
+    }
+  ) => api.put(`/information/${id}`, data),
 
   delete: (id: string) => api.delete(`/information/${id}`),
 

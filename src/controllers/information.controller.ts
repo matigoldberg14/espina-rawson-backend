@@ -283,11 +283,7 @@ export class InformationController {
   };
 
   // Obtener categorías únicas
-  getCategories = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const categories = await prisma.information.findMany({
         select: { category: true },
@@ -295,7 +291,7 @@ export class InformationController {
         where: { isActive: true },
       });
 
-      const categoryList = categories.map(item => item.category);
+      const categoryList = categories.map((item) => item.category);
 
       res.json({
         success: true,
@@ -307,18 +303,14 @@ export class InformationController {
   };
 
   // Obtener tags únicos
-  getTags = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  getTags = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const information = await prisma.information.findMany({
         select: { tags: true },
         where: { isActive: true },
       });
 
-      const allTags = information.flatMap(item => item.tags);
+      const allTags = information.flatMap((item) => item.tags);
       const uniqueTags = [...new Set(allTags)];
 
       res.json({
@@ -331,11 +323,7 @@ export class InformationController {
   };
 
   // Upload de archivos
-  uploadFile = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  uploadFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.file) {
         return res.status(400).json({
