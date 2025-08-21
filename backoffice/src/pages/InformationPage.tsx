@@ -110,9 +110,10 @@ const InformationPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await informationService.getAll();
-      setInformation(response.data);
+      setInformation(response.data.data || []);
     } catch (error) {
       console.error('Error fetching information:', error);
+      setInformation([]); // Asegurar que siempre sea un array
     } finally {
       setLoading(false);
     }
