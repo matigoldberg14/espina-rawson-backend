@@ -20,6 +20,7 @@ import PracticeAreasPage from './pages/PracticeAreasPage';
 import SettingsPage from './pages/SettingsPage';
 import UsersPage from './pages/UsersPage';
 import NewsletterPage from './pages/NewsletterPage';
+import InformationPage from './pages/InformationPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/newsletter" element={<NewsletterPage />} />
+                <Route path="/information" element={<InformationPage />} />
               </Route>
             </Route>
           </Routes>

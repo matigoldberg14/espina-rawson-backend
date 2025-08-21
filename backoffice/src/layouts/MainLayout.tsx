@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   Mail,
+  Info,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
@@ -21,6 +22,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Contenido', href: '/content', icon: FileText },
   { name: 'Subastas', href: '/auctions', icon: Gavel },
+  { name: 'Información', href: '/information', icon: Info },
   { name: 'Newsletter', href: '/newsletter', icon: Mail },
   { name: 'Áreas de Práctica', href: '/practice-areas', icon: Briefcase },
   { name: 'Configuración', href: '/settings', icon: Settings },

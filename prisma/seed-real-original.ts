@@ -211,9 +211,11 @@ async function seedRealOriginal() {
       status: AuctionStatus.PUBLISHED,
       isFeatured: true,
       order: 0,
-      mainImageUrl: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
-      secondaryImage1: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop',
-      pdfUrl: 'https://example.com/inmueble-parque-patricios.pdf'
+      mainImageUrl:
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
+      secondaryImage1:
+        'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop',
+      pdfUrl: 'https://example.com/inmueble-parque-patricios.pdf',
     },
     {
       title: 'Flota de Vehículos Comerciales',
@@ -226,9 +228,11 @@ async function seedRealOriginal() {
       status: AuctionStatus.PUBLISHED,
       isFeatured: true,
       order: 1,
-      mainImageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&h=600&fit=crop',
-      secondaryImage1: 'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&h=600&fit=crop',
-      pdfUrl: 'https://example.com/flota-vehiculos.pdf'
+      mainImageUrl:
+        'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=800&h=600&fit=crop',
+      secondaryImage1:
+        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&h=600&fit=crop',
+      pdfUrl: 'https://example.com/flota-vehiculos.pdf',
     },
     {
       title: 'Maquinaria Agrícola de Alto Rendimiento',
@@ -241,9 +245,11 @@ async function seedRealOriginal() {
       status: AuctionStatus.PUBLISHED,
       isFeatured: true,
       order: 2,
-      mainImageUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop',
-      secondaryImage1: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&h=600&fit=crop',
-      pdfUrl: 'https://example.com/maquinaria-agricola.pdf'
+      mainImageUrl:
+        'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop',
+      secondaryImage1:
+        'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&h=600&fit=crop',
+      pdfUrl: 'https://example.com/maquinaria-agricola.pdf',
     },
   ];
 

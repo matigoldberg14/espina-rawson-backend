@@ -174,3 +174,56 @@ export const dashboardService = {
 
   getUpcomingAuctions: () => api.get('/dashboard/auctions/upcoming'),
 };
+
+export const informationService = {
+  getAll: (params?: { type?: string; category?: string; isActive?: boolean }) =>
+    api.get('/information', { params }),
+
+  getById: (id: string) => api.get(`/information/${id}`),
+
+  create: (data: {
+    title: string;
+    description: string;
+    type: 'ARTICLE' | 'VIDEO' | 'IMAGE';
+    url?: string;
+    thumbnail?: string;
+    author: string;
+    publishDate: string;
+    tags: string[];
+    category: string;
+    isActive: boolean;
+    order: number;
+  }) => api.post('/information', data),
+
+  update: (id: string, data: {
+    title?: string;
+    description?: string;
+    type?: 'ARTICLE' | 'VIDEO' | 'IMAGE';
+    url?: string;
+    thumbnail?: string;
+    author?: string;
+    publishDate?: string;
+    tags?: string[];
+    category?: string;
+    isActive?: boolean;
+    order?: number;
+  }) => api.put(`/information/${id}`, data),
+
+  delete: (id: string) => api.delete(`/information/${id}`),
+
+  reorder: (items: { id: string; order: number }[]) =>
+    api.post('/information/reorder', { items }),
+
+  uploadFile: (file: File, type: 'pdf' | 'image' | 'video') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    return api.post('/information/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  getCategories: () => api.get('/information/categories'),
+
+  getTags: () => api.get('/information/tags'),
+};
