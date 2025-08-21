@@ -5,10 +5,37 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
 import { Label } from '../components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../components/ui/alert-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { toast } from '../hooks/use-toast';
 
 interface PracticeArea {
@@ -31,9 +58,25 @@ interface CreatePracticeAreaData {
 }
 
 const ICON_OPTIONS = [
-  'Briefcase', 'Gavel', 'Scale', 'Shield', 'Building', 'Factory',
-  'Users', 'FileText', 'BookOpen', 'Award', 'Target', 'TrendingUp',
-  'Zap', 'Star', 'Heart', 'Globe', 'MapPin', 'Phone', 'Mail'
+  'Briefcase',
+  'Gavel',
+  'Scale',
+  'Shield',
+  'Building',
+  'Factory',
+  'Users',
+  'FileText',
+  'BookOpen',
+  'Award',
+  'Target',
+  'TrendingUp',
+  'Zap',
+  'Star',
+  'Heart',
+  'Globe',
+  'MapPin',
+  'Phone',
+  'Mail',
 ];
 
 const PracticeAreasPage: React.FC = () => {
@@ -58,10 +101,10 @@ const PracticeAreasPage: React.FC = () => {
       setLoading(true);
       const response = await fetch('/api/practice-areas/admin', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setPracticeAreas(data.data || []);
@@ -71,9 +114,9 @@ const PracticeAreasPage: React.FC = () => {
     } catch (error) {
       console.error('Error fetching practice areas:', error);
       toast({
-        title: "Error",
-        description: "No se pudieron cargar las áreas de práctica",
-        variant: "destructive",
+        title: 'Error',
+        description: 'No se pudieron cargar las áreas de práctica',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -82,32 +125,32 @@ const PracticeAreasPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const url = editingArea 
+      const url = editingArea
         ? `/api/practice-areas/${editingArea.id}`
         : '/api/practice-areas';
-      
+
       const method = editingArea ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: "Éxito",
-          description: editingArea 
-            ? "Área de práctica actualizada correctamente"
-            : "Área de práctica creada correctamente",
+          title: 'Éxito',
+          description: editingArea
+            ? 'Área de práctica actualizada correctamente'
+            : 'Área de práctica creada correctamente',
         });
-        
+
         setIsCreateDialogOpen(false);
         setEditingArea(null);
         resetForm();
@@ -118,9 +161,9 @@ const PracticeAreasPage: React.FC = () => {
     } catch (error) {
       console.error('Error submitting practice area:', error);
       toast({
-        title: "Error",
-        description: "No se pudo completar la operación",
-        variant: "destructive",
+        title: 'Error',
+        description: 'No se pudo completar la operación',
+        variant: 'destructive',
       });
     }
   };
@@ -142,14 +185,14 @@ const PracticeAreasPage: React.FC = () => {
       const response = await fetch(`/api/practice-areas/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
 
       if (response.ok) {
         toast({
-          title: "Éxito",
-          description: "Área de práctica eliminada correctamente",
+          title: 'Éxito',
+          description: 'Área de práctica eliminada correctamente',
         });
         fetchPracticeAreas();
       } else {
@@ -158,9 +201,9 @@ const PracticeAreasPage: React.FC = () => {
     } catch (error) {
       console.error('Error deleting practice area:', error);
       toast({
-        title: "Error",
-        description: "No se pudo eliminar el área de práctica",
-        variant: "destructive",
+        title: 'Error',
+        description: 'No se pudo eliminar el área de práctica',
+        variant: 'destructive',
       });
     }
   };
@@ -171,15 +214,17 @@ const PracticeAreasPage: React.FC = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify({ isActive: !area.isActive })
+        body: JSON.stringify({ isActive: !area.isActive }),
       });
 
       if (response.ok) {
         toast({
-          title: "Éxito",
-          description: `Área de práctica ${!area.isActive ? 'activada' : 'desactivada'} correctamente`,
+          title: 'Éxito',
+          description: `Área de práctica ${
+            !area.isActive ? 'activada' : 'desactivada'
+          } correctamente`,
         });
         fetchPracticeAreas();
       } else {
@@ -188,9 +233,9 @@ const PracticeAreasPage: React.FC = () => {
     } catch (error) {
       console.error('Error toggling practice area:', error);
       toast({
-        title: "Error",
-        description: "No se pudo actualizar el estado",
-        variant: "destructive",
+        title: 'Error',
+        description: 'No se pudo actualizar el estado',
+        variant: 'destructive',
       });
     }
   };
@@ -216,7 +261,9 @@ const PracticeAreasPage: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Cargando áreas de práctica...</p>
+          <p className="mt-4 text-muted-foreground">
+            Cargando áreas de práctica...
+          </p>
         </div>
       </div>
     );
@@ -227,7 +274,9 @@ const PracticeAreasPage: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold">Áreas de Práctica</h1>
-          <p className="text-muted-foreground">Gestiona las áreas de práctica del estudio</p>
+          <p className="text-muted-foreground">
+            Gestiona las áreas de práctica del estudio
+          </p>
         </div>
         <Button onClick={openCreateDialog} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -242,14 +291,18 @@ const PracticeAreasPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="bg-primary/10 p-3 rounded-lg">
-                    <span className="text-primary font-semibold">{area.icon}</span>
+                    <span className="text-primary font-semibold">
+                      {area.icon}
+                    </span>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{area.title}</h3>
                     <p className="text-muted-foreground">{area.description}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                       <span>Orden: {area.order}</span>
-                      <span>Estado: {area.isActive ? 'Activo' : 'Inactivo'}</span>
+                      <span>
+                        Estado: {area.isActive ? 'Activo' : 'Inactivo'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -259,7 +312,11 @@ const PracticeAreasPage: React.FC = () => {
                     size="sm"
                     onClick={() => handleToggleActive(area)}
                   >
-                    {area.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    {area.isActive ? (
+                      <Eye className="h-4 w-4" />
+                    ) : (
+                      <EyeOff className="h-4 w-4" />
+                    )}
                   </Button>
                   <Button
                     variant="outline"
@@ -278,12 +335,15 @@ const PracticeAreasPage: React.FC = () => {
                       <AlertDialogHeader>
                         <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Esta acción no se puede deshacer. Se eliminará permanentemente el área de práctica.
+                          Esta acción no se puede deshacer. Se eliminará
+                          permanentemente el área de práctica.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(area.id)}>
+                        <AlertDialogAction
+                          onClick={() => handleDelete(area.id)}
+                        >
                           Eliminar
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -300,7 +360,9 @@ const PracticeAreasPage: React.FC = () => {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {editingArea ? 'Editar Área de Práctica' : 'Nueva Área de Práctica'}
+              {editingArea
+                ? 'Editar Área de Práctica'
+                : 'Nueva Área de Práctica'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -310,14 +372,21 @@ const PracticeAreasPage: React.FC = () => {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   placeholder="Derecho Corporativo y M&A"
                   required
                 />
               </div>
               <div>
                 <Label htmlFor="icon">Icono *</Label>
-                <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
+                <Select
+                  value={formData.icon}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, icon: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccionar icono" />
                   </SelectTrigger>
@@ -331,13 +400,15 @@ const PracticeAreasPage: React.FC = () => {
                 </Select>
               </div>
             </div>
-            
+
             <div>
               <Label htmlFor="description">Descripción *</Label>
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Asesoramiento en fusiones, adquisiciones, gobierno corporativo..."
                 rows={3}
                 required
@@ -351,7 +422,12 @@ const PracticeAreasPage: React.FC = () => {
                   id="order"
                   type="number"
                   value={formData.order}
-                  onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      order: parseInt(e.target.value) || 0,
+                    })
+                  }
                   placeholder="0"
                 />
               </div>
@@ -359,7 +435,9 @@ const PracticeAreasPage: React.FC = () => {
                 <Switch
                   id="isActive"
                   checked={formData.isActive}
-                  onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, isActive: checked })
+                  }
                 />
                 <Label htmlFor="isActive">Activo</Label>
               </div>

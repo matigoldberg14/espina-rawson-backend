@@ -12,51 +12,55 @@ export interface CreateStudioContentData {
   isActive?: boolean;
 }
 
-export interface UpdateStudioContentData extends Partial<CreateStudioContentData> {}
+export interface UpdateStudioContentData
+  extends Partial<CreateStudioContentData> {}
 
 export class StudioContentService {
   async getAll(): Promise<StudioContent[]> {
     return prisma.studioContent.findMany({
       where: { isActive: true },
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getAllForAdmin(): Promise<StudioContent[]> {
     return prisma.studioContent.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getBySection(section: string): Promise<StudioContent | null> {
     return prisma.studioContent.findFirst({
-      where: { section, isActive: true }
+      where: { section, isActive: true },
     });
   }
 
   async getById(id: string): Promise<StudioContent | null> {
     return prisma.studioContent.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
   async create(data: CreateStudioContentData): Promise<StudioContent> {
     return prisma.studioContent.create({
-      data
+      data,
     });
   }
 
-  async update(id: string, data: UpdateStudioContentData): Promise<StudioContent> {
+  async update(
+    id: string,
+    data: UpdateStudioContentData
+  ): Promise<StudioContent> {
     return prisma.studioContent.update({
       where: { id },
-      data
+      data,
     });
   }
 
   async delete(id: string): Promise<StudioContent> {
     return prisma.studioContent.update({
       where: { id },
-      data: { isActive: false }
+      data: { isActive: false },
     });
   }
 
@@ -64,7 +68,7 @@ export class StudioContentService {
     const updates = ids.map((id, index) =>
       prisma.studioContent.update({
         where: { id },
-        data: { order: index }
+        data: { order: index },
       })
     );
     await prisma.$transaction(updates);

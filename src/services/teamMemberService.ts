@@ -18,39 +18,39 @@ export class TeamMemberService {
   async getAll(): Promise<TeamMember[]> {
     return prisma.teamMember.findMany({
       where: { isActive: true },
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getAllForAdmin(): Promise<TeamMember[]> {
     return prisma.teamMember.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getById(id: string): Promise<TeamMember | null> {
     return prisma.teamMember.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
   async create(data: CreateTeamMemberData): Promise<TeamMember> {
     return prisma.teamMember.create({
-      data
+      data,
     });
   }
 
   async update(id: string, data: UpdateTeamMemberData): Promise<TeamMember> {
     return prisma.teamMember.update({
       where: { id },
-      data
+      data,
     });
   }
 
   async delete(id: string): Promise<TeamMember> {
     return prisma.teamMember.update({
       where: { id },
-      data: { isActive: false }
+      data: { isActive: false },
     });
   }
 
@@ -58,7 +58,7 @@ export class TeamMemberService {
     const updates = ids.map((id, index) =>
       prisma.teamMember.update({
         where: { id },
-        data: { order: index }
+        data: { order: index },
       })
     );
     await prisma.$transaction(updates);

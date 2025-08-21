@@ -10,45 +10,49 @@ export interface CreatePracticeAreaData {
   isActive?: boolean;
 }
 
-export interface UpdatePracticeAreaData extends Partial<CreatePracticeAreaData> {}
+export interface UpdatePracticeAreaData
+  extends Partial<CreatePracticeAreaData> {}
 
 export class PracticeAreaService {
   async getAll(): Promise<PracticeArea[]> {
     return prisma.practiceArea.findMany({
       where: { isActive: true },
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getAllForAdmin(): Promise<PracticeArea[]> {
     return prisma.practiceArea.findMany({
-      orderBy: { order: 'asc' }
+      orderBy: { order: 'asc' },
     });
   }
 
   async getById(id: string): Promise<PracticeArea | null> {
     return prisma.practiceArea.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
   async create(data: CreatePracticeAreaData): Promise<PracticeArea> {
     return prisma.practiceArea.create({
-      data
+      data,
     });
   }
 
-  async update(id: string, data: UpdatePracticeAreaData): Promise<PracticeArea> {
+  async update(
+    id: string,
+    data: UpdatePracticeAreaData
+  ): Promise<PracticeArea> {
     return prisma.practiceArea.update({
       where: { id },
-      data
+      data,
     });
   }
 
   async delete(id: string): Promise<PracticeArea> {
     return prisma.practiceArea.update({
       where: { id },
-      data: { isActive: false }
+      data: { isActive: false },
     });
   }
 
@@ -56,7 +60,7 @@ export class PracticeAreaService {
     const updates = ids.map((id, index) =>
       prisma.practiceArea.update({
         where: { id },
-        data: { order: index }
+        data: { order: index },
       })
     );
     await prisma.$transaction(updates);
