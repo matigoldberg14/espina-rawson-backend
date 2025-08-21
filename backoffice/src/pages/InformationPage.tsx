@@ -76,10 +76,22 @@ const InformationPage: React.FC = () => {
   const [editingItem, setEditingItem] = useState<Information | null>(null);
   const [activeTab, setActiveTab] = useState('all');
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    type: 'ARTICLE' | 'VIDEO' | 'IMAGE';
+    url: string;
+    thumbnail: string;
+    author: string;
+    publishDate: string;
+    tags: string;
+    category: string;
+    isActive: boolean;
+    order: number;
+  }>({
     title: '',
     description: '',
-    type: 'ARTICLE' as const,
+    type: 'ARTICLE',
     url: '',
     thumbnail: '',
     author: '',
@@ -167,7 +179,7 @@ const InformationPage: React.FC = () => {
     setFormData({
       title: '',
       description: '',
-      type: 'ARTICLE',
+      type: 'ARTICLE' as 'ARTICLE' | 'VIDEO' | 'IMAGE',
       url: '',
       thumbnail: '',
       author: '',
@@ -266,8 +278,8 @@ const InformationPage: React.FC = () => {
                   <Label htmlFor="type">Tipo *</Label>
                   <Select
                     value={formData.type}
-                    onValueChange={(value) =>
-                      setFormData({ ...formData, type: value as any })
+                    onValueChange={(value: 'ARTICLE' | 'VIDEO' | 'IMAGE') =>
+                      setFormData({ ...formData, type: value })
                     }
                   >
                     <SelectTrigger>
@@ -302,9 +314,9 @@ const InformationPage: React.FC = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                   rows={3}
                   required
                 />
@@ -321,13 +333,11 @@ const InformationPage: React.FC = () => {
                     }
                     placeholder="https://example.com/archivo.pdf"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    {formData.type === 'ARTICLE' && 'URL del PDF o artículo'}
-                    {formData.type === 'VIDEO' &&
-                      'URL del video (YouTube, Vimeo, etc.)'}
-                    {formData.type === 'IMAGE' &&
-                      'URL de la galería o imagen principal'}
-                  </p>
+                                      <p className="text-xs text-gray-500 mt-1">
+                      {formData.type === 'ARTICLE' && 'URL del PDF o artículo'}
+                      {formData.type === 'VIDEO' && 'URL del video (YouTube, Vimeo, etc.)'}
+                      {formData.type === 'IMAGE' && 'URL de la galería o imagen principal'}
+                    </p>
                 </div>
                 <div>
                   <Label htmlFor="thumbnail">Imagen Miniatura</Label>
@@ -413,7 +423,7 @@ const InformationPage: React.FC = () => {
                 <Switch
                   id="isActive"
                   checked={formData.isActive}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     setFormData({ ...formData, isActive: checked })
                   }
                 />
