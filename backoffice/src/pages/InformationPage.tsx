@@ -314,9 +314,9 @@ const InformationPage: React.FC = () => {
                 <Textarea
                   id="description"
                   value={formData.description}
-                                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   rows={3}
                   required
                 />
@@ -333,11 +333,13 @@ const InformationPage: React.FC = () => {
                     }
                     placeholder="https://example.com/archivo.pdf"
                   />
-                                      <p className="text-xs text-gray-500 mt-1">
-                      {formData.type === 'ARTICLE' && 'URL del PDF o artículo'}
-                      {formData.type === 'VIDEO' && 'URL del video (YouTube, Vimeo, etc.)'}
-                      {formData.type === 'IMAGE' && 'URL de la galería o imagen principal'}
-                    </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {formData.type === 'ARTICLE' && 'URL del PDF o artículo'}
+                    {formData.type === 'VIDEO' &&
+                      'URL del video (YouTube, Vimeo, etc.)'}
+                    {formData.type === 'IMAGE' &&
+                      'URL de la galería o imagen principal'}
+                  </p>
                 </div>
                 <div>
                   <Label htmlFor="thumbnail">Imagen Miniatura</Label>
