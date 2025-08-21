@@ -253,4 +253,111 @@ export class InformationController {
       next(error);
     }
   };
+
+  // Reordenar información
+  reorderInformation = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { items } = req.body;
+
+      // Actualizar el orden de cada elemento
+      const updatePromises = items.map((item: { id: string; order: number }) =>
+        prisma.information.update({
+          where: { id: item.id },
+          data: { order: item.order },
+        })
+      );
+
+      await Promise.all(updatePromises);
+
+      res.json({
+        success: true,
+        message: 'Orden actualizado correctamente',
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Obtener categorías únicas
+  getCategories = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const categories = await prisma.information.findMany({
+        select: { category: true },
+        distinct: ['category'],
+        where: { isActive: true },
+      });
+
+      const categoryList = categories.map(item => item.category);
+
+      res.json({
+        success: true,
+        data: categoryList,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Obtener tags únicos
+  getTags = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const information = await prisma.information.findMany({
+        select: { tags: true },
+        where: { isActive: true },
+      });
+
+      const allTags = information.flatMap(item => item.tags);
+      const uniqueTags = [...new Set(allTags)];
+
+      res.json({
+        success: true,
+        data: uniqueTags,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Upload de archivos
+  uploadFile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: { message: 'No se ha proporcionado ningún archivo' },
+        });
+      }
+
+      const fileUrl = `/uploads/information/${req.file.filename}`;
+
+      res.json({
+        success: true,
+        data: {
+          filename: req.file.filename,
+          originalName: req.file.originalname,
+          url: fileUrl,
+          size: req.file.size,
+          mimetype: req.file.mimetype,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
