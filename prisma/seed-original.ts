@@ -9,8 +9,10 @@ async function seedOriginal() {
   // 1. Crear usuario administrador
   console.log('🔐 Creando usuario administrador...');
   const hashedPassword = await bcrypt.hash('admin123456', 12);
-  await prisma.user.create({
-    data: {
+  await prisma.user.upsert({
+    where: { email: 'admin@espinarawson.com' },
+    update: {},
+    create: {
       email: 'admin@espinarawson.com',
       password: hashedPassword,
       name: 'Administrador',
@@ -83,8 +85,10 @@ async function seedOriginal() {
   ];
 
   for (const content of pageContents) {
-    await prisma.pageContent.create({
-      data: content,
+    await prisma.pageContent.upsert({
+      where: { key: content.key },
+      update: { value: content.value },
+      create: content,
     });
   }
   console.log('✅ Contenido de páginas creado');
@@ -122,6 +126,8 @@ async function seedOriginal() {
     },
   ];
 
+  // Limpiar áreas de práctica existentes y crear nuevas
+  await prisma.practiceArea.deleteMany({});
   for (const area of practiceAreas) {
     await prisma.practiceArea.create({
       data: area,
@@ -212,6 +218,8 @@ async function seedOriginal() {
     },
   ];
 
+  // Limpiar subastas existentes y crear nuevas
+  await prisma.auction.deleteMany({});
   for (const auction of auctions) {
     await prisma.auction.create({
       data: auction,
@@ -266,6 +274,8 @@ async function seedOriginal() {
     },
   ];
 
+  // Limpiar información existente y crear nueva
+  await prisma.information.deleteMany({});
   for (const info of informationData) {
     await prisma.information.create({
       data: info,
