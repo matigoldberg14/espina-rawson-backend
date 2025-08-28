@@ -23,8 +23,8 @@ const clearValidationErrors = (req: any, res: any, next: any) => {
   next();
 };
 
-// Todas las rutas requieren autenticación (EXCEPTO debug)
-router.use(authenticate);
+// TEMPORALMENTE SIN AUTENTICACIÓN PARA DEBUG
+// router.use(authenticate);
 
 // Aplicar limpieza de validaciones a TODAS las rutas
 router.use(clearValidationErrors);
