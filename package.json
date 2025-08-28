@@ -1,6 +1,6 @@
 {
   "name": "espina-rawson-backend",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",

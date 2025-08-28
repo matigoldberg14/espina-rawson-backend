@@ -16,8 +16,8 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   );
 
   // BYPASS temporal para settings - limpiar errores residuales
-  if (req.path.includes('/settings/')) {
-    console.log('🚫 BYPASSING validation for settings route');
+  if (req.path.includes('/settings')) {
+    console.log('🚫 BYPASSING validation for settings route:', req.path);
     return next();
   }
 
