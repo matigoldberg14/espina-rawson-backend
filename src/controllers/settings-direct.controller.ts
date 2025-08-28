@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
-import { db } from '../lib/db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export class SettingsDirectController {
   // Actualización DIRECTA sin validaciones
@@ -19,7 +21,7 @@ export class SettingsDirectController {
         });
       }
 
-      const setting = await db.settings.upsert({
+      const setting = await prisma.settings.upsert({
         where: { key },
         create: {
           key,
