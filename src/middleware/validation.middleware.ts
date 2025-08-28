@@ -10,6 +10,14 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   );
   console.log('📝 Request body:', JSON.stringify(req.body));
 
+  // LOG DETALLADO para debug
+  console.log('🔍 PATH ANALYSIS:');
+  console.log('  req.path:', req.path);
+  console.log('  req.originalUrl:', req.originalUrl);
+  console.log('  req.baseUrl:', req.baseUrl);
+  console.log('  req.url:', req.url);
+  console.log('  includes settings?:', req.path.includes('/settings') || req.originalUrl.includes('/settings'));
+
   // BYPASS NUCLEAR para CUALQUIER ruta de settings - SIN VALIDACIONES
   if (req.path.includes('/settings') || req.originalUrl.includes('/settings')) {
     console.log('🚫 NUCLEAR BYPASS for settings route - NO VALIDATION AT ALL');
