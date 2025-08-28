@@ -112,7 +112,10 @@ app.use('/api/auctions', auctionRoutes);
 
 // PRUEBA DIRECTA SIN ARCHIVO SEPARADO
 const directSettingsController = new SettingsController();
-app.put('/api/settings-direct-test/:key', directSettingsController.updateSetting);
+app.put(
+  '/api/settings-direct-test/:key',
+  directSettingsController.updateSetting
+);
 
 // RUTA SIMPLE SIN NADA DE MIDDLEWARE
 app.use('/api/settings-simple', settingsSimpleRoutes);
