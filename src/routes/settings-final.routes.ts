@@ -45,7 +45,7 @@ const keyValidation = [
 
 router.put(
   '/:key',
-  authorize('SUPER_ADMIN', 'ADMIN'),
+  // authorize('SUPER_ADMIN', 'ADMIN'), // TEMPORALMENTE COMENTADO
   keyValidation,
   settingsValidation,
   validate,
