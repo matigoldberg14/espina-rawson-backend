@@ -2,11 +2,18 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 
 export const validate = (req: Request, res: Response, next: NextFunction) => {
-  console.log('✅ DEBUG - validate middleware called for:', req.method, req.path);
+  console.log(
+    '✅ DEBUG - validate middleware called for:',
+    req.method,
+    req.path
+  );
   console.log('📝 Request body:', JSON.stringify(req.body));
-  
+
   const errors = validationResult(req);
-  console.log('🔍 Validation errors:', errors.isEmpty() ? 'None' : errors.array());
+  console.log(
+    '🔍 Validation errors:',
+    errors.isEmpty() ? 'None' : errors.array()
+  );
 
   if (!errors.isEmpty()) {
     console.log('❌ Validation failed:', errors.array());

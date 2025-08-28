@@ -28,6 +28,8 @@ import { notFound } from './middleware/notFound.middleware';
 // Cargar variables de entorno
 dotenv.config();
 
+// TIMESTAMP: Force deploy - ${new Date().toISOString()}
+
 // Inicializar Prisma
 export const prisma = new PrismaClient();
 

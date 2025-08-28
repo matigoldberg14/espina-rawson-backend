@@ -23,7 +23,11 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    console.log('🔐 DEBUG - authenticate middleware called for:', req.method, req.path);
+    console.log(
+      '🔐 DEBUG - authenticate middleware called for:',
+      req.method,
+      req.path
+    );
     // Obtener token del header
     const authHeader = req.headers.authorization;
     console.log('🔑 Auth header:', authHeader ? 'Present' : 'Missing');
@@ -102,9 +106,12 @@ export const authenticate = async (
 export const authorize = (...roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     console.log('🛡️ DEBUG - authorize middleware called');
-    console.log('👤 User:', req.user ? `${req.user.email} (${req.user.role})` : 'None');
+    console.log(
+      '👤 User:',
+      req.user ? `${req.user.email} (${req.user.role})` : 'None'
+    );
     console.log('🎭 Required roles:', roles);
-    
+
     if (!req.user) {
       console.log('❌ No user found');
       return res.status(401).json({
