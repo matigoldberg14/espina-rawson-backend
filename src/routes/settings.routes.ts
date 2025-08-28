@@ -12,7 +12,7 @@ router.use(authenticate);
 
 // Validaciones
 const settingValidation = [
-  body('value').exists().withMessage('El valor es requerido'),
+  body('value').exists({ checkNull: true, checkFalsy: false }).withMessage('El valor es requerido'),
   body('description').optional().isString().trim(),
 ];
 
@@ -22,8 +22,6 @@ router.get('/:key', settingsController.getSettingByKey);
 router.put(
   '/:key',
   authorize('SUPER_ADMIN', 'ADMIN'),
-  settingValidation,
-  validate,
   settingsController.updateSetting
 );
 
