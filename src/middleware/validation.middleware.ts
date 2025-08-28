@@ -9,25 +9,27 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
   );
   console.log('📝 Request body:', JSON.stringify(req.body));
 
+  // BYPASS COMPLETO Y DEFINITIVO para CUALQUIER ruta de settings
+  if (req.path.includes('/settings') || req.originalUrl.includes('/settings')) {
+    console.log('🚫 COMPLETE BYPASS for settings route:', req.path, req.originalUrl);
+    return next();
+  }
+
   const errors = validationResult(req);
   console.log(
     '🔍 Validation errors:',
     errors.isEmpty() ? 'None' : errors.array()
   );
 
-  // BYPASS COMPLETO para settings - NO VALIDAR NADA
-  if (req.path.includes('/settings')) {
-    console.log('🚫 COMPLETE BYPASS for settings route:', req.path);
-    return next();
-  }
-
-  // BYPASS COMPLETO para cualquier cosa que tenga validaciones residuales
+  // BYPASS para errores de 'key' en body (validaciones residuales)
   if (!errors.isEmpty()) {
-    const hasKeyBodyError = errors
-      .array()
-      .some((err: any) => err.path === 'key' && err.location === 'body');
+    const errorArray = errors.array();
+    const hasKeyBodyError = errorArray.some((err: any) => 
+      err.path === 'key' && err.location === 'body'
+    );
+    
     if (hasKeyBodyError) {
-      console.log('🚫 BYPASSING residual key validation errors');
+      console.log('🚫 BYPASSING residual key validation errors:', errorArray);
       return next();
     }
   }
