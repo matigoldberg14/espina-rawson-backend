@@ -12,7 +12,6 @@ router.use(authenticate);
 
 // Validaciones
 const settingValidation = [
-  body('key').isString().trim().notEmpty().withMessage('La clave es requerida'),
   body('value').exists().withMessage('El valor es requerido'),
   body('description').optional().isString().trim(),
 ];
