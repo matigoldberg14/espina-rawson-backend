@@ -23,7 +23,9 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
 
   // BYPASS COMPLETO para cualquier cosa que tenga validaciones residuales
   if (!errors.isEmpty()) {
-    const hasKeyBodyError = errors.array().some(err => err.path === 'key' && err.location === 'body');
+    const hasKeyBodyError = errors
+      .array()
+      .some((err: any) => err.path === 'key' && err.location === 'body');
     if (hasKeyBodyError) {
       console.log('🚫 BYPASSING residual key validation errors');
       return next();
