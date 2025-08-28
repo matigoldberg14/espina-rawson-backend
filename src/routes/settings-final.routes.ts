@@ -60,3 +60,4 @@ router.post(
 );
 
 export default router;
+console.log('🚀 NUCLEAR TEST - Settings route loaded!');
