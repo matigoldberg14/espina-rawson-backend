@@ -46,6 +46,10 @@ export class SettingsController {
 
   updateSetting = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('🔍 DEBUG - updateSetting called');
+      console.log('📦 Body:', req.body);
+      console.log('🔑 Key:', req.params.key);
+      
       const { key } = req.params;
       const { value, description } = req.body;
 
@@ -63,15 +67,22 @@ export class SettingsController {
       });
 
       // Registrar actividad
-      await this.activityLog.log({
-        userId: req.user?.id,
-        action: 'UPDATE_SETTING',
-        entity: 'settings',
-        entityId: setting.id,
-        details: { key, value },
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-      });
+      console.log('📝 About to log activity...');
+      try {
+        await this.activityLog.log({
+          userId: req.user?.id,
+          action: 'UPDATE_SETTING',
+          entity: 'settings',
+          entityId: setting.id,
+          details: { key, value },
+          ipAddress: req.ip,
+          userAgent: req.headers['user-agent'],
+        });
+        console.log('✅ Activity logged successfully');
+      } catch (logError) {
+        console.error('❌ Error logging activity:', logError);
+        // No fallar por error de log
+      }
 
       res.json({
         success: true,
