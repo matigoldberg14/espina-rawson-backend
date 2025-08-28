@@ -50,6 +50,17 @@ export class SettingsController {
       console.log('📦 Body:', req.body);
       console.log('🔑 Key:', req.params.key);
       
+      // Limpiar cualquier error de validación residual
+      const { validationResult } = require('express-validator');
+      const errors = validationResult(req);
+      console.log('🔍 Current validation errors:', errors.array());
+      
+      // Forzar limpieza de errores
+      if (req as any)._validationErrors) {
+        console.log('🧹 Clearing residual validation errors');
+        delete (req as any)._validationErrors;
+      }
+      
       const { key } = req.params;
       const { value, description } = req.body;
 
