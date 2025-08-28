@@ -56,7 +56,7 @@ export class SettingsController {
       console.log('🔍 Current validation errors:', errors.array());
       
       // Forzar limpieza de errores
-      if (req as any)._validationErrors) {
+      if ((req as any)._validationErrors) {
         console.log('🧹 Clearing residual validation errors');
         delete (req as any)._validationErrors;
       }
