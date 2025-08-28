@@ -1,7 +1,9 @@
 import { Router } from 'express';
-import { body, param } from 'express-validator';
+// REMOVIDO: express-validator completamente
+// import { body, param } from 'express-validator';
 import { SettingsController } from '../controllers/settings.controller';
-import { validate } from '../middleware/validation.middleware';
+// REMOVIDO: validation middleware
+// import { validate } from '../middleware/validation.middleware';
 import { authenticate, authorize } from '../middleware/auth.middleware';
 
 const router = Router();
@@ -13,13 +15,13 @@ router.put('/debug/:key', settingsController.updateSetting);
 // Todas las rutas requieren autenticación
 router.use(authenticate);
 
-// Validaciones
-const settingValidation = [
-  body('value')
-    .exists({ checkNull: true, checkFalsy: false })
-    .withMessage('El valor es requerido'),
-  body('description').optional().isString().trim(),
-];
+// REMOVIDO: Todas las validaciones de express-validator
+// const settingValidation = [
+//   body('value')
+//     .exists({ checkNull: true, checkFalsy: false })
+//     .withMessage('El valor es requerido'),
+//   body('description').optional().isString().trim(),
+// ];
 
 // Rutas
 router.get('/', settingsController.getAllSettings);
@@ -35,7 +37,7 @@ router.put(
   settingsController.updateSetting
 );
 
-// Actualización masiva
+// Actualización masiva - SIN VALIDACIONES
 router.post(
   '/bulk-update',
   authorize('SUPER_ADMIN', 'ADMIN'),

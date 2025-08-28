@@ -10,7 +10,7 @@ export class SettingsDirectController {
       console.log('🚀 DIRECT UPDATE - No validation');
       console.log('Key:', req.params.key);
       console.log('Body:', req.body);
-      
+
       const { key } = req.params;
       const { value, description } = req.body;
 
