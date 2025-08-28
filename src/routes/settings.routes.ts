@@ -28,6 +28,7 @@ router.get('/:key', settingsController.getSettingByKey);
 // ENDPOINT TEMPORAL SIN MIDDLEWARE PARA DEBUG
 router.put('/test/:key', settingsController.updateSetting);
 
+// TEMPORAL: Sin validación para debug
 router.put(
   '/:key',
   authorize('SUPER_ADMIN', 'ADMIN'),
