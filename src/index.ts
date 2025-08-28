@@ -110,7 +110,7 @@ app.use('/api/auctions', auctionRoutes);
 app.use('/api/settings-simple', settingsSimpleRoutes);
 // TEMPORAL: Nueva ruta para debug TOTAL
 app.use('/api/settings-test', settingsFinalRoutes);
-// USAR LA RUTA FINAL LIMPIA  
+// USAR LA RUTA FINAL LIMPIA
 app.use('/api/settings', settingsFinalRoutes);
 app.use('/api/settings-clean', settingsCleanRoutes);
 app.use('/api/settings-direct', settingsDirectRoutes);
