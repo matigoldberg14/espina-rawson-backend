@@ -112,11 +112,11 @@ app.use('/api/auctions', auctionRoutes);
 
 // PRUEBA SUPER SIMPLE
 app.put('/api/test-simple/:key', (req, res) => {
-  res.json({ 
-    success: true, 
-    message: "RUTA FUNCIONA!", 
+  res.json({
+    success: true,
+    message: 'RUTA FUNCIONA!',
     key: req.params.key,
-    body: req.body 
+    body: req.body,
   });
 });
 
