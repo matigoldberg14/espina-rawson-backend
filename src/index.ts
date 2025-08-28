@@ -110,6 +110,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/auctions', auctionRoutes);
 
+// PRUEBA SUPER SIMPLE
+app.put('/api/test-simple/:key', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "RUTA FUNCIONA!", 
+    key: req.params.key,
+    body: req.body 
+  });
+});
+
 // PRUEBA DIRECTA SIN ARCHIVO SEPARADO
 const directSettingsController = new SettingsController();
 app.put(
