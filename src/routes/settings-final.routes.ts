@@ -7,6 +7,9 @@ import { validate } from '../middleware/validation.middleware';
 const router = Router();
 const settingsController = new SettingsController();
 
+// ENDPOINT DE DEBUG SIN AUTENTICACIÓN (ANTES del middleware authenticate)
+router.put('/debug/:key', settingsController.updateSetting);
+
 // MIDDLEWARE CUSTOM PARA LIMPIAR VALIDACIONES DE EXPRESS-VALIDATOR
 const clearValidationErrors = (req: any, res: any, next: any) => {
   console.log('🧹 CLEARING validation errors for settings route');
@@ -20,7 +23,7 @@ const clearValidationErrors = (req: any, res: any, next: any) => {
   next();
 };
 
-// Todas las rutas requieren autenticación
+// Todas las rutas requieren autenticación (EXCEPTO debug)
 router.use(authenticate);
 
 // Aplicar limpieza de validaciones a TODAS las rutas
