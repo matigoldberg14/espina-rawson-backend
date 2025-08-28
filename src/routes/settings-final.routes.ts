@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { body, param } from 'express-validator';
 import { SettingsController } from '../controllers/settings.controller';
 import { authenticate, authorize } from '../middleware/auth.middleware';
+import { validate } from '../middleware/validation.middleware';
 
 const router = Router();
 const settingsController = new SettingsController();
@@ -28,10 +30,24 @@ router.use(clearValidationErrors);
 router.get('/', settingsController.getAllSettings);
 router.get('/:key', settingsController.getSettingByKey);
 
-// RUTA PRINCIPAL SIN VALIDACIONES
+// COPIAR ESTRUCTURA DE CONTENT - SIN validar 'key' en body
+const settingsValidation = [
+  body('value')
+    .notEmpty()
+    .withMessage('El valor es requerido'),
+  body('description').optional().isString().trim(),
+];
+
+const keyValidation = [
+  param('key').isString().notEmpty().withMessage('Key inválido'),
+];
+
 router.put(
   '/:key',
   authorize('SUPER_ADMIN', 'ADMIN'),
+  keyValidation,
+  settingsValidation,
+  validate,
   settingsController.updateSetting
 );
 
