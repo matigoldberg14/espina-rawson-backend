@@ -13,6 +13,7 @@ import authRoutes from './routes/auth.routes';
 import contentRoutes from './routes/content.routes';
 import auctionRoutes from './routes/auction.routes';
 import settingsRoutes from './routes/settings.routes';
+import settingsFinalRoutes from './routes/settings-final.routes';
 import settingsCleanRoutes from './routes/settings-clean.routes';
 import settingsDirectRoutes from './routes/settings-direct.routes';
 import dashboardRoutes from './routes/dashboard.routes';
@@ -104,7 +105,8 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/auctions', auctionRoutes);
-app.use('/api/settings', settingsRoutes);
+// USAR LA RUTA FINAL LIMPIA
+app.use('/api/settings', settingsFinalRoutes);
 app.use('/api/settings-clean', settingsCleanRoutes);
 app.use('/api/settings-direct', settingsDirectRoutes);
 app.use('/api/dashboard', dashboardRoutes);
