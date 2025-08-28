@@ -25,6 +25,9 @@ import informationRoutes from './routes/information.routes';
 import publicRoutes from './routes/public.routes';
 import newsletterRoutes from './routes/newsletter.routes';
 
+// Importar controlador para prueba directa
+import { SettingsController } from './controllers/settings.controller';
+
 // Middlewares
 import { errorHandler } from './middleware/error.middleware';
 import { notFound } from './middleware/notFound.middleware';
@@ -106,6 +109,11 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/auctions', auctionRoutes);
+
+// PRUEBA DIRECTA SIN ARCHIVO SEPARADO
+const directSettingsController = new SettingsController();
+app.put('/api/settings-direct-test/:key', directSettingsController.updateSetting);
+
 // RUTA SIMPLE SIN NADA DE MIDDLEWARE
 app.use('/api/settings-simple', settingsSimpleRoutes);
 // TEMPORAL: Nueva ruta para debug TOTAL

@@ -50,7 +50,10 @@ const client_1 = require("@prisma/client");
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const content_routes_1 = __importDefault(require("./routes/content.routes"));
 const auction_routes_1 = __importDefault(require("./routes/auction.routes"));
-const settings_routes_1 = __importDefault(require("./routes/settings.routes"));
+const settings_final_routes_1 = __importDefault(require("./routes/settings-final.routes"));
+const settings_simple_routes_1 = __importDefault(require("./routes/settings-simple.routes"));
+const settings_clean_routes_1 = __importDefault(require("./routes/settings-clean.routes"));
+const settings_direct_routes_1 = __importDefault(require("./routes/settings-direct.routes"));
 const dashboard_routes_1 = __importDefault(require("./routes/dashboard.routes"));
 const practiceAreas_1 = __importDefault(require("./routes/practiceAreas"));
 const teamMembers_1 = __importDefault(require("./routes/teamMembers"));
@@ -63,6 +66,7 @@ const error_middleware_1 = require("./middleware/error.middleware");
 const notFound_middleware_1 = require("./middleware/notFound.middleware");
 // Cargar variables de entorno
 dotenv_1.default.config();
+// TIMESTAMP: Force deploy v1.0.25 SETTINGS FIX - ${new Date().toISOString()}
 // Inicializar Prisma
 exports.prisma = new client_1.PrismaClient();
 // Crear aplicación Express
@@ -115,7 +119,14 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/content', content_routes_1.default);
 app.use('/api/auctions', auction_routes_1.default);
-app.use('/api/settings', settings_routes_1.default);
+// RUTA SIMPLE SIN NADA DE MIDDLEWARE
+app.use('/api/settings-simple', settings_simple_routes_1.default);
+// TEMPORAL: Nueva ruta para debug TOTAL
+app.use('/api/settings-test', settings_final_routes_1.default);
+// USAR LA RUTA FINAL LIMPIA
+app.use('/api/settings', settings_final_routes_1.default);
+app.use('/api/settings-clean', settings_clean_routes_1.default);
+app.use('/api/settings-direct', settings_direct_routes_1.default);
 app.use('/api/dashboard', dashboard_routes_1.default);
 app.use('/api/practice-areas', practiceAreas_1.default);
 app.use('/api/team-members', teamMembers_1.default);

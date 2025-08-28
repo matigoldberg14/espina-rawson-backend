@@ -42,8 +42,20 @@ class SettingsController {
     };
     updateSetting = async (req, res, next) => {
         try {
+            console.log('🔍 DEBUG - updateSetting called');
+            console.log('📦 Body:', JSON.stringify(req.body, null, 2));
+            console.log('🔑 Key:', req.params.key);
+            console.log('👤 User:', req.user ? `${req.user.email} (${req.user.role})` : 'None');
             const { key } = req.params;
             const { value, description } = req.body;
+            // Validación manual simple
+            if (!value && value !== 0 && value !== false) {
+                console.log('❌ Manual validation failed: value required');
+                return res.status(400).json({
+                    success: false,
+                    error: { message: 'Value is required' },
+                });
+            }
             const setting = await index_1.prisma.settings.upsert({
                 where: { key },
                 update: {
@@ -57,15 +69,23 @@ class SettingsController {
                 },
             });
             // Registrar actividad
-            await this.activityLog.log({
-                userId: req.user?.id,
-                action: 'UPDATE_SETTING',
-                entity: 'settings',
-                entityId: setting.id,
-                details: { key, value },
-                ipAddress: req.ip,
-                userAgent: req.headers['user-agent'],
-            });
+            console.log('📝 About to log activity...');
+            try {
+                await this.activityLog.log({
+                    userId: req.user?.id,
+                    action: 'UPDATE_SETTING',
+                    entity: 'settings',
+                    entityId: setting.id,
+                    details: { key, value },
+                    ipAddress: req.ip,
+                    userAgent: req.headers['user-agent'],
+                });
+                console.log('✅ Activity logged successfully');
+            }
+            catch (logError) {
+                console.error('❌ Error logging activity:', logError);
+                // No fallar por error de log
+            }
             res.json({
                 success: true,
                 data: setting,

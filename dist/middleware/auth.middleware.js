@@ -8,8 +8,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const index_1 = require("../index");
 const authenticate = async (req, res, next) => {
     try {
+        console.log('🔐 DEBUG - authenticate middleware called for:', req.method, req.path);
         // Obtener token del header
         const authHeader = req.headers.authorization;
+        console.log('🔑 Auth header:', authHeader ? 'Present' : 'Missing');
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
                 success: false,
@@ -72,18 +74,24 @@ exports.authenticate = authenticate;
 // Middleware para verificar roles
 const authorize = (...roles) => {
     return (req, res, next) => {
+        console.log('🛡️ DEBUG - authorize middleware called');
+        console.log('👤 User:', req.user ? `${req.user.email} (${req.user.role})` : 'None');
+        console.log('🎭 Required roles:', roles);
         if (!req.user) {
+            console.log('❌ No user found');
             return res.status(401).json({
                 success: false,
                 error: { message: 'No autenticado' },
             });
         }
         if (!roles.includes(req.user.role)) {
+            console.log('❌ User role not authorized:', req.user.role);
             return res.status(403).json({
                 success: false,
                 error: { message: 'No tienes permisos para realizar esta acción' },
             });
         }
+        console.log('✅ Authorization successful');
         next();
     };
 };
