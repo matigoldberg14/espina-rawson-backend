@@ -61,6 +61,8 @@ const studioContent_1 = __importDefault(require("./routes/studioContent"));
 const information_routes_1 = __importDefault(require("./routes/information.routes"));
 const public_routes_1 = __importDefault(require("./routes/public.routes"));
 const newsletter_routes_1 = __importDefault(require("./routes/newsletter.routes"));
+// Importar controlador para prueba directa
+const settings_controller_1 = require("./controllers/settings.controller");
 // Middlewares
 const error_middleware_1 = require("./middleware/error.middleware");
 const notFound_middleware_1 = require("./middleware/notFound.middleware");
@@ -119,6 +121,18 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', auth_routes_1.default);
 app.use('/api/content', content_routes_1.default);
 app.use('/api/auctions', auction_routes_1.default);
+// PRUEBA SUPER SIMPLE
+app.put('/api/test-simple/:key', (req, res) => {
+    res.json({
+        success: true,
+        message: 'RUTA FUNCIONA!',
+        key: req.params.key,
+        body: req.body,
+    });
+});
+// PRUEBA DIRECTA SIN ARCHIVO SEPARADO
+const directSettingsController = new settings_controller_1.SettingsController();
+app.put('/api/settings-direct-test/:key', directSettingsController.updateSetting);
 // RUTA SIMPLE SIN NADA DE MIDDLEWARE
 app.use('/api/settings-simple', settings_simple_routes_1.default);
 // TEMPORAL: Nueva ruta para debug TOTAL

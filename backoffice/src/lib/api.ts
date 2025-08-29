@@ -38,7 +38,7 @@ api.interceptors.response.use(
       // Unauthorized - redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      window.location.href = '/backoffice/login';
       toast.error('Sesión expirada. Por favor, inicie sesión nuevamente.');
     } else if (error.response?.data?.error?.message) {
       toast.error(error.response.data.error.message);
