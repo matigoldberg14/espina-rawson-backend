@@ -8,10 +8,15 @@ async function seedRealOriginal() {
 
   // 1. Crear usuario administrador
   console.log('🔐 Creando usuario administrador...');
-  const hashedPassword = await bcrypt.hash('admin123456', 12);
+  const hashedPassword = await bcrypt.hash('AdminEspina2024!', 12);
   await prisma.user.upsert({
     where: { email: 'admin@espinarawson.com' },
-    update: {},
+    update: {
+      password: hashedPassword,
+      name: 'Administrador',
+      role: 'SUPER_ADMIN',
+      isActive: true,
+    },
     create: {
       email: 'admin@espinarawson.com',
       password: hashedPassword,
