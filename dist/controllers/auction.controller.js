@@ -118,7 +118,7 @@ class AuctionController {
     };
     createAuction = async (req, res, next) => {
         try {
-            const { title, description, type, location, startingPrice, endDate, status, metadata, youtubeUrl, mainImageUrl, secondaryImage1, secondaryImage2, secondaryImage3, secondaryImage4, secondaryImage5, pdfUrl, } = req.body;
+            const { title, description, type, location, startingPrice, endDate, status, metadata, youtubeUrl, mainImageUrl, secondaryImage1, secondaryImage2, secondaryImage3, secondaryImage4, secondaryImage5, pdfUrl, auctionLink, } = req.body;
             const auction = await index_1.prisma.auction.create({
                 data: {
                     title,
@@ -138,6 +138,7 @@ class AuctionController {
                     secondaryImage4,
                     secondaryImage5,
                     pdfUrl,
+                    auctionLink,
                 },
             });
             // Registrar actividad
@@ -162,7 +163,7 @@ class AuctionController {
     updateAuction = async (req, res, next) => {
         try {
             const { id } = req.params;
-            const { title, description, type, location, startingPrice, endDate, status, metadata, youtubeUrl, mainImageUrl, secondaryImage1, secondaryImage2, secondaryImage3, secondaryImage4, secondaryImage5, pdfUrl, } = req.body;
+            const { title, description, type, location, startingPrice, endDate, status, metadata, youtubeUrl, mainImageUrl, secondaryImage1, secondaryImage2, secondaryImage3, secondaryImage4, secondaryImage5, pdfUrl, auctionLink, } = req.body;
             const auction = await index_1.prisma.auction.update({
                 where: { id },
                 data: {
@@ -182,6 +183,7 @@ class AuctionController {
                     secondaryImage4,
                     secondaryImage5,
                     pdfUrl,
+                    auctionLink,
                 },
                 include: {
                     images: true,
