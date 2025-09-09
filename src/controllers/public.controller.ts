@@ -100,6 +100,7 @@ export class PublicController {
             secondaryImage5: true,
             pdfUrl: true,
             youtubeUrl: true,
+            auctionLink: true, // Enlace oficial de la subasta
             type: true,
             isFeatured: true,
             images: {
@@ -205,6 +206,7 @@ export class PublicController {
           secondaryImage5: true,
           pdfUrl: true,
           youtubeUrl: true,
+          auctionLink: true, // Enlace oficial de la subasta
           type: true,
           isFeatured: true,
           metadata: true,

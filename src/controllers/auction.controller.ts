@@ -149,6 +149,40 @@ export class AuctionController {
         auctionLink,
       } = req.body;
 
+      // Procesar archivos subidos
+      const files = req.files as Express.Multer.File[];
+      let processedMainImage = mainImageUrl;
+      let processedSecondaryImages = {
+        secondaryImage1,
+        secondaryImage2,
+        secondaryImage3,
+        secondaryImage4,
+        secondaryImage5,
+      };
+      let processedPdfUrl = pdfUrl;
+
+      if (files && files.length > 0) {
+        const baseUrl = process.env.BASE_URL || 'https://espina-rawson-backend-production.up.railway.app';
+        
+        // Procesar imágenes
+        const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
+        if (imageFiles.length > 0) {
+          processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
+          
+          // Asignar imágenes secundarias
+          imageFiles.slice(1, 6).forEach((file, index) => {
+            const fieldName = `secondaryImage${index + 1}`;
+            processedSecondaryImages[fieldName] = `${baseUrl}/uploads/${file.filename}`;
+          });
+        }
+
+        // Procesar PDF
+        const pdfFile = files.find(file => file.mimetype === 'application/pdf');
+        if (pdfFile) {
+          processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
+        }
+      }
+
       const auction = await prisma.auction.create({
         data: {
           title,
@@ -161,13 +195,13 @@ export class AuctionController {
           status: status || 'DRAFT',
           metadata,
           youtubeUrl,
-          mainImageUrl,
-          secondaryImage1,
-          secondaryImage2,
-          secondaryImage3,
-          secondaryImage4,
-          secondaryImage5,
-          pdfUrl,
+          mainImageUrl: processedMainImage,
+          secondaryImage1: processedSecondaryImages.secondaryImage1,
+          secondaryImage2: processedSecondaryImages.secondaryImage2,
+          secondaryImage3: processedSecondaryImages.secondaryImage3,
+          secondaryImage4: processedSecondaryImages.secondaryImage4,
+          secondaryImage5: processedSecondaryImages.secondaryImage5,
+          pdfUrl: processedPdfUrl,
           auctionLink,
         },
       });
@@ -215,6 +249,40 @@ export class AuctionController {
         auctionLink,
       } = req.body;
 
+      // Procesar archivos subidos
+      const files = req.files as Express.Multer.File[];
+      let processedMainImage = mainImageUrl;
+      let processedSecondaryImages = {
+        secondaryImage1,
+        secondaryImage2,
+        secondaryImage3,
+        secondaryImage4,
+        secondaryImage5,
+      };
+      let processedPdfUrl = pdfUrl;
+
+      if (files && files.length > 0) {
+        const baseUrl = process.env.BASE_URL || 'https://espina-rawson-backend-production.up.railway.app';
+        
+        // Procesar imágenes
+        const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
+        if (imageFiles.length > 0) {
+          processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
+          
+          // Asignar imágenes secundarias
+          imageFiles.slice(1, 6).forEach((file, index) => {
+            const fieldName = `secondaryImage${index + 1}`;
+            processedSecondaryImages[fieldName] = `${baseUrl}/uploads/${file.filename}`;
+          });
+        }
+
+        // Procesar PDF
+        const pdfFile = files.find(file => file.mimetype === 'application/pdf');
+        if (pdfFile) {
+          processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
+        }
+      }
+
       const auction = await prisma.auction.update({
         where: { id },
         data: {
@@ -227,13 +295,13 @@ export class AuctionController {
           status,
           metadata,
           youtubeUrl,
-          mainImageUrl,
-          secondaryImage1,
-          secondaryImage2,
-          secondaryImage3,
-          secondaryImage4,
-          secondaryImage5,
-          pdfUrl,
+          mainImageUrl: processedMainImage,
+          secondaryImage1: processedSecondaryImages.secondaryImage1,
+          secondaryImage2: processedSecondaryImages.secondaryImage2,
+          secondaryImage3: processedSecondaryImages.secondaryImage3,
+          secondaryImage4: processedSecondaryImages.secondaryImage4,
+          secondaryImage5: processedSecondaryImages.secondaryImage5,
+          pdfUrl: processedPdfUrl,
           auctionLink,
         },
         include: {

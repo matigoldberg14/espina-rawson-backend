@@ -45,6 +45,7 @@ const schema = yup.object({
   secondaryImage4: yup.string().url('Debe ser una URL válida').nullable(),
   secondaryImage5: yup.string().url('Debe ser una URL válida').nullable(),
   pdfUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  files: yup.mixed().nullable(), // Archivos subidos
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
   auctionLink: yup.string().url('Debe ser una URL válida').nullable(),
   isFeatured: yup.boolean().default(false),
@@ -96,6 +97,7 @@ export default function AuctionFormPage() {
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
         isFeatured: auction.isFeatured || false,
+        files: null, // Archivos subidos
       });
     }
   }, [auction, reset]);
@@ -121,10 +123,27 @@ export default function AuctionFormPage() {
   });
 
   const onSubmit = (data: FormData) => {
+    // Crear FormData para enviar archivos
+    const formData = new FormData();
+    
+    // Agregar todos los campos del formulario
+    Object.keys(data).forEach(key => {
+      if (key !== 'files' && data[key] !== null && data[key] !== '') {
+        formData.append(key, data[key]);
+      }
+    });
+
+    // Agregar archivos si existen
+    if (data.files && data.files.length > 0) {
+      Array.from(data.files).forEach(file => {
+        formData.append('files', file);
+      });
+    }
+
     if (isEdit) {
-      updateMutation.mutate(data);
+      updateMutation.mutate(formData);
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(formData);
     }
   };
 
@@ -219,6 +238,32 @@ export default function AuctionFormPage() {
               {errors.mainImageUrl && (
                 <p className="text-sm text-destructive">
                   {errors.mainImageUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="files">O subir archivos desde la computadora</Label>
+              <Input
+                id="files"
+                type="file"
+                multiple
+                accept="image/*,application/pdf"
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files) {
+                    setValue('files', files);
+                  }
+                }}
+                disabled={loading}
+                className="cursor-pointer"
+              />
+              <p className="text-sm text-muted-foreground">
+                Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera imagen será la principal.
+              </p>
+              {errors.files && (
+                <p className="text-sm text-destructive">
+                  {errors.files.message}
                 </p>
               )}
             </div>

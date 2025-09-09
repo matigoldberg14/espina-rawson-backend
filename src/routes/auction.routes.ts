@@ -3,7 +3,7 @@ import { body, param, query } from 'express-validator';
 import { AuctionController } from '../controllers/auction.controller';
 import { validate } from '../middleware/validation.middleware';
 import { authenticate, authorize } from '../middleware/auth.middleware';
-import { uploadMiddleware } from '../middleware/upload.middleware';
+import { uploadMiddleware, uploadMultipleImages, uploadPDFMiddleware } from '../middleware/upload.middleware';
 
 const router = Router();
 const auctionController = new AuctionController();
@@ -47,6 +47,7 @@ router.get('/:id', idValidation, validate, auctionController.getAuctionById);
 router.post(
   '/',
   authorize('SUPER_ADMIN', 'ADMIN'),
+  uploadMultipleImages.array('files', 10), // Permitir hasta 10 archivos (imágenes + PDF)
   auctionValidation,
   validate,
   auctionController.createAuction
@@ -54,6 +55,7 @@ router.post(
 router.put(
   '/:id',
   authorize('SUPER_ADMIN', 'ADMIN'),
+  uploadMultipleImages.array('files', 10), // Permitir hasta 10 archivos (imágenes + PDF)
   idValidation,
   auctionValidation,
   validate,

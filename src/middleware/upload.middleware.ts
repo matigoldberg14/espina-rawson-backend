@@ -20,13 +20,13 @@ const storage = multer.diskStorage({
   },
 });
 
-// Filtro de archivos
-const fileFilter = (
+// Filtro de archivos para imágenes
+const imageFilter = (
   req: Request,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
 ) => {
-  // Tipos de archivo permitidos
+  // Tipos de archivo permitidos para imágenes
   const allowedTypes = /jpeg|jpg|png|gif|webp/;
   const extname = allowedTypes.test(
     path.extname(file.originalname).toLowerCase()
@@ -40,12 +40,50 @@ const fileFilter = (
   }
 };
 
-// Crear middleware
+// Filtro de archivos para PDFs
+const pdfFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  // Solo PDFs
+  const allowedTypes = /pdf/;
+  const extname = allowedTypes.test(
+    path.extname(file.originalname).toLowerCase()
+  );
+  const mimetype = file.mimetype === 'application/pdf';
+
+  if (extname && mimetype) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten archivos PDF'));
+  }
+};
+
+// Crear middlewares
 export const uploadMiddleware = multer({
   storage,
-  fileFilter,
+  fileFilter: imageFilter,
   limits: {
     fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'), // 10MB por defecto
+  },
+});
+
+export const uploadPDFMiddleware = multer({
+  storage,
+  fileFilter: pdfFilter,
+  limits: {
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'), // 10MB por defecto
+  },
+});
+
+// Middleware para múltiples archivos (imágenes)
+export const uploadMultipleImages = multer({
+  storage,
+  fileFilter: imageFilter,
+  limits: {
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'),
+    files: 10, // Máximo 10 archivos
   },
 });
 
