@@ -16,6 +16,7 @@ import {
 } from '../components/ui/card';
 import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
+import FileUpload from '../components/FileUpload';
 
 const schema = yup.object({
   title: yup.string().required('Título requerido'),
@@ -243,34 +244,21 @@ export default function AuctionFormPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="files">
-                O subir archivos desde la computadora
-              </Label>
-              <Input
-                id="files"
-                type="file"
-                multiple
-                accept="image/*,application/pdf"
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (files) {
-                    setValue('files', files);
-                  }
-                }}
-                disabled={loading}
-                className="cursor-pointer"
-              />
-              <p className="text-sm text-muted-foreground">
-                Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera
-                imagen será la principal.
+            <FileUpload
+              label="O subir archivos desde la computadora"
+              accept="image/*,application/pdf"
+              multiple={true}
+              maxFiles={10}
+              onFilesChange={(files) => setValue('files', files)}
+              disabled={loading}
+              description="Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera imagen será la principal."
+              showPreview={true}
+            />
+            {errors.files && (
+              <p className="text-sm text-destructive">
+                {String(errors.files.message)}
               </p>
-              {errors.files && (
-                <p className="text-sm text-destructive">
-                  {String(errors.files.message)}
-                </p>
-              )}
-            </div>
+            )}
 
             <div className="space-y-4">
               <Label>Imágenes secundarias (hasta 5)</Label>
