@@ -84,18 +84,23 @@ const combinedFilter = (
   cb: multer.FileFilterCallback
 ) => {
   // Permitir imágenes y PDFs
-  const isImage = /jpeg|jpg|png|gif|webp/.test(
-    path.extname(file.originalname).toLowerCase()
-  ) && file.mimetype.startsWith('image/');
-  
-  const isPdf = /pdf/.test(
-    path.extname(file.originalname).toLowerCase()
-  ) && file.mimetype === 'application/pdf';
+  const isImage =
+    /jpeg|jpg|png|gif|webp/.test(
+      path.extname(file.originalname).toLowerCase()
+    ) && file.mimetype.startsWith('image/');
+
+  const isPdf =
+    /pdf/.test(path.extname(file.originalname).toLowerCase()) &&
+    file.mimetype === 'application/pdf';
 
   if (isImage || isPdf) {
     cb(null, true);
   } else {
-    cb(new Error('Solo se permiten imágenes (JPEG, PNG, GIF, WebP) y archivos PDF'));
+    cb(
+      new Error(
+        'Solo se permiten imágenes (JPEG, PNG, GIF, WebP) y archivos PDF'
+      )
+    );
   }
 };
 
