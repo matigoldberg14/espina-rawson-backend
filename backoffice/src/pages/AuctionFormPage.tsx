@@ -125,9 +125,9 @@ export default function AuctionFormPage() {
   const onSubmit = (data: FormData) => {
     // Crear FormData para enviar archivos
     const formData = new FormData();
-    
+
     // Agregar todos los campos del formulario
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
       if (key !== 'files' && data[key] !== null && data[key] !== '') {
         formData.append(key, data[key]);
       }
@@ -135,7 +135,7 @@ export default function AuctionFormPage() {
 
     // Agregar archivos si existen
     if (data.files && data.files.length > 0) {
-      Array.from(data.files).forEach(file => {
+      Array.from(data.files).forEach((file) => {
         formData.append('files', file);
       });
     }
@@ -243,7 +243,9 @@ export default function AuctionFormPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="files">O subir archivos desde la computadora</Label>
+              <Label htmlFor="files">
+                O subir archivos desde la computadora
+              </Label>
               <Input
                 id="files"
                 type="file"
@@ -259,7 +261,8 @@ export default function AuctionFormPage() {
                 className="cursor-pointer"
               />
               <p className="text-sm text-muted-foreground">
-                Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera imagen será la principal.
+                Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera
+                imagen será la principal.
               </p>
               {errors.files && (
                 <p className="text-sm text-destructive">

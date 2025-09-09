@@ -3,7 +3,11 @@ import { body, param, query } from 'express-validator';
 import { AuctionController } from '../controllers/auction.controller';
 import { validate } from '../middleware/validation.middleware';
 import { authenticate, authorize } from '../middleware/auth.middleware';
-import { uploadMiddleware, uploadMultipleImages, uploadPDFMiddleware } from '../middleware/upload.middleware';
+import {
+  uploadMiddleware,
+  uploadMultipleImages,
+  uploadPDFMiddleware,
+} from '../middleware/upload.middleware';
 
 const router = Router();
 const auctionController = new AuctionController();

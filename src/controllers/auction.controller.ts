@@ -152,7 +152,7 @@ export class AuctionController {
       // Procesar archivos subidos
       const files = req.files as Express.Multer.File[];
       let processedMainImage = mainImageUrl;
-      let processedSecondaryImages = {
+      let processedSecondaryImages: Record<string, string | undefined> = {
         secondaryImage1,
         secondaryImage2,
         secondaryImage3,
@@ -162,22 +162,30 @@ export class AuctionController {
       let processedPdfUrl = pdfUrl;
 
       if (files && files.length > 0) {
-        const baseUrl = process.env.BASE_URL || 'https://espina-rawson-backend-production.up.railway.app';
-        
+        const baseUrl =
+          process.env.BASE_URL ||
+          'https://espina-rawson-backend-production.up.railway.app';
+
         // Procesar imágenes
-        const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
+        const imageFiles = files.filter((file) =>
+          file.mimetype.startsWith('image/')
+        );
         if (imageFiles.length > 0) {
           processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
-          
+
           // Asignar imágenes secundarias
           imageFiles.slice(1, 6).forEach((file, index) => {
             const fieldName = `secondaryImage${index + 1}`;
-            processedSecondaryImages[fieldName] = `${baseUrl}/uploads/${file.filename}`;
+            processedSecondaryImages[
+              fieldName
+            ] = `${baseUrl}/uploads/${file.filename}`;
           });
         }
 
         // Procesar PDF
-        const pdfFile = files.find(file => file.mimetype === 'application/pdf');
+        const pdfFile = files.find(
+          (file) => file.mimetype === 'application/pdf'
+        );
         if (pdfFile) {
           processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
         }
@@ -252,7 +260,7 @@ export class AuctionController {
       // Procesar archivos subidos
       const files = req.files as Express.Multer.File[];
       let processedMainImage = mainImageUrl;
-      let processedSecondaryImages = {
+      let processedSecondaryImages: Record<string, string | undefined> = {
         secondaryImage1,
         secondaryImage2,
         secondaryImage3,
@@ -262,22 +270,30 @@ export class AuctionController {
       let processedPdfUrl = pdfUrl;
 
       if (files && files.length > 0) {
-        const baseUrl = process.env.BASE_URL || 'https://espina-rawson-backend-production.up.railway.app';
-        
+        const baseUrl =
+          process.env.BASE_URL ||
+          'https://espina-rawson-backend-production.up.railway.app';
+
         // Procesar imágenes
-        const imageFiles = files.filter(file => file.mimetype.startsWith('image/'));
+        const imageFiles = files.filter((file) =>
+          file.mimetype.startsWith('image/')
+        );
         if (imageFiles.length > 0) {
           processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
-          
+
           // Asignar imágenes secundarias
           imageFiles.slice(1, 6).forEach((file, index) => {
             const fieldName = `secondaryImage${index + 1}`;
-            processedSecondaryImages[fieldName] = `${baseUrl}/uploads/${file.filename}`;
+            processedSecondaryImages[
+              fieldName
+            ] = `${baseUrl}/uploads/${file.filename}`;
           });
         }
 
         // Procesar PDF
-        const pdfFile = files.find(file => file.mimetype === 'application/pdf');
+        const pdfFile = files.find(
+          (file) => file.mimetype === 'application/pdf'
+        );
         if (pdfFile) {
           processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
         }
