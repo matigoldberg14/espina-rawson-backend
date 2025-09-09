@@ -105,6 +105,17 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Health check for Railway (API path)
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    service: 'espina-rawson-backend',
+    version: '1.0.28'
+  });
+});
+
 // Rutas de la API
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
