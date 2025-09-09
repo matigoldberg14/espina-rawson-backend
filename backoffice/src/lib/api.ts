@@ -16,6 +16,20 @@ export const api = axios.create({
   },
 });
 
+// Helper function to handle FormData requests
+const handleFormDataRequest = (
+  method: 'post' | 'put',
+  url: string,
+  data: any
+) => {
+  if (data instanceof FormData) {
+    return api[method](url, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  }
+  return api[method](url, data);
+};
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
@@ -104,9 +118,9 @@ export const contentService = {
 
   getById: (id: string) => api.get(`/content/${id}`),
 
-  create: (data: any) => api.post('/content', data),
+  create: (data: any) => handleFormDataRequest('post', '/content', data),
 
-  update: (id: string, data: any) => api.put(`/content/${id}`, data),
+  update: (id: string, data: any) => handleFormDataRequest('put', `/content/${id}`, data),
 
   delete: (id: string) => api.delete(`/content/${id}`),
 
@@ -121,25 +135,9 @@ export const auctionService = {
 
   getById: (id: string) => api.get(`/auctions/${id}`),
 
-  create: (data: any) => {
-    // Si data es FormData, usar multipart/form-data
-    if (data instanceof FormData) {
-      return api.post('/auctions', data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    }
-    return api.post('/auctions', data);
-  },
+  create: (data: any) => handleFormDataRequest('post', '/auctions', data),
 
-  update: (id: string, data: any) => {
-    // Si data es FormData, usar multipart/form-data
-    if (data instanceof FormData) {
-      return api.put(`/auctions/${id}`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    }
-    return api.put(`/auctions/${id}`, data);
-  },
+  update: (id: string, data: any) => handleFormDataRequest('put', `/auctions/${id}`, data),
 
   delete: (id: string) => api.delete(`/auctions/${id}`),
 
@@ -171,9 +169,9 @@ export const practiceAreaService = {
 
   getById: (id: string) => api.get(`/practice-areas/${id}`),
 
-  create: (data: any) => api.post('/practice-areas', data),
+  create: (data: any) => handleFormDataRequest('post', '/practice-areas', data),
 
-  update: (id: string, data: any) => api.put(`/practice-areas/${id}`, data),
+  update: (id: string, data: any) => handleFormDataRequest('put', `/practice-areas/${id}`, data),
 
   delete: (id: string) => api.delete(`/practice-areas/${id}`),
 
@@ -207,36 +205,9 @@ export const informationService = {
 
   getById: (id: string) => api.get(`/information/${id}`),
 
-  create: (data: {
-    title: string;
-    description: string;
-    type: 'ARTICLE' | 'VIDEO' | 'IMAGE';
-    url?: string;
-    thumbnail?: string;
-    author: string;
-    publishDate: string;
-    tags: string[];
-    category: string;
-    isActive: boolean;
-    order: number;
-  }) => api.post('/information', data),
+  create: (data: any) => handleFormDataRequest('post', '/information', data),
 
-  update: (
-    id: string,
-    data: {
-      title?: string;
-      description?: string;
-      type?: 'ARTICLE' | 'VIDEO' | 'IMAGE';
-      url?: string;
-      thumbnail?: string;
-      author?: string;
-      publishDate?: string;
-      tags?: string[];
-      category?: string;
-      isActive?: boolean;
-      order?: number;
-    }
-  ) => api.put(`/information/${id}`, data),
+  update: (id: string, data: any) => handleFormDataRequest('put', `/information/${id}`, data),
 
   delete: (id: string) => api.delete(`/information/${id}`),
 
