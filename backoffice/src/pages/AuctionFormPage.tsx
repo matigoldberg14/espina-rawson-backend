@@ -176,7 +176,7 @@ export default function AuctionFormPage() {
               <Input id="title" {...register('title')} disabled={loading} />
               {errors.title && (
                 <p className="text-sm text-destructive">
-                  {errors.title.message}
+                  {String(errors.title.message)}
                 </p>
               )}
             </div>
@@ -191,7 +191,7 @@ export default function AuctionFormPage() {
               />
               {errors.description && (
                 <p className="text-sm text-destructive">
-                  {errors.description.message}
+                  {String(errors.description.message)}
                 </p>
               )}
             </div>
@@ -222,7 +222,7 @@ export default function AuctionFormPage() {
               </select>
               {errors.type && (
                 <p className="text-sm text-destructive">
-                  {errors.type.message}
+                  {String(errors.type.message)}
                 </p>
               )}
             </div>
@@ -238,7 +238,7 @@ export default function AuctionFormPage() {
               />
               {errors.mainImageUrl && (
                 <p className="text-sm text-destructive">
-                  {errors.mainImageUrl.message}
+                  {String(errors.mainImageUrl.message)}
                 </p>
               )}
             </div>
@@ -267,7 +267,7 @@ export default function AuctionFormPage() {
               </p>
               {errors.files && (
                 <p className="text-sm text-destructive">
-                  {errors.files.message}
+                  {String(errors.files.message)}
                 </p>
               )}
             </div>
@@ -286,7 +286,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.secondaryImage1 && (
                   <p className="text-sm text-destructive">
-                    {errors.secondaryImage1.message}
+                    {String(errors.secondaryImage1.message)}
                   </p>
                 )}
               </div>
@@ -302,7 +302,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.secondaryImage2 && (
                   <p className="text-sm text-destructive">
-                    {errors.secondaryImage2.message}
+                    {String(errors.secondaryImage2.message)}
                   </p>
                 )}
               </div>
@@ -318,7 +318,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.secondaryImage3 && (
                   <p className="text-sm text-destructive">
-                    {errors.secondaryImage3.message}
+                    {String(errors.secondaryImage3.message)}
                   </p>
                 )}
               </div>
@@ -334,7 +334,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.secondaryImage4 && (
                   <p className="text-sm text-destructive">
-                    {errors.secondaryImage4.message}
+                    {String(errors.secondaryImage4.message)}
                   </p>
                 )}
               </div>
@@ -350,7 +350,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.secondaryImage5 && (
                   <p className="text-sm text-destructive">
-                    {errors.secondaryImage5.message}
+                    {String(errors.secondaryImage5.message)}
                   </p>
                 )}
               </div>
@@ -367,7 +367,7 @@ export default function AuctionFormPage() {
               />
               {errors.pdfUrl && (
                 <p className="text-sm text-destructive">
-                  {errors.pdfUrl.message}
+                  {String(errors.pdfUrl.message)}
                 </p>
               )}
             </div>
@@ -383,7 +383,7 @@ export default function AuctionFormPage() {
               />
               {errors.youtubeUrl && (
                 <p className="text-sm text-destructive">
-                  {errors.youtubeUrl.message}
+                  {String(errors.youtubeUrl.message)}
                 </p>
               )}
             </div>
@@ -399,7 +399,7 @@ export default function AuctionFormPage() {
               />
               {errors.auctionLink && (
                 <p className="text-sm text-destructive">
-                  {errors.auctionLink.message}
+                  {String(errors.auctionLink.message)}
                 </p>
               )}
             </div>
@@ -428,7 +428,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.startingPrice && (
                   <p className="text-sm text-destructive">
-                    {errors.startingPrice.message}
+                    {String(errors.startingPrice.message)}
                   </p>
                 )}
               </div>
@@ -443,7 +443,7 @@ export default function AuctionFormPage() {
                 />
                 {errors.endDate && (
                   <p className="text-sm text-destructive">
-                    {errors.endDate.message}
+                    {String(errors.endDate.message)}
                   </p>
                 )}
               </div>
