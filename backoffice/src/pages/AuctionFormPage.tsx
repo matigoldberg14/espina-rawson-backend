@@ -72,8 +72,9 @@ export default function AuctionFormPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<any>({
     resolver: yupResolver(schema),
   });
 
@@ -122,28 +123,28 @@ export default function AuctionFormPage() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: any) => {
     // Crear FormData para enviar archivos
     const formData = new FormData();
 
     // Agregar todos los campos del formulario
     Object.keys(data).forEach((key) => {
       if (key !== 'files' && data[key] !== null && data[key] !== '') {
-        formData.append(key, data[key]);
+        formData.append(key, String(data[key]));
       }
     });
 
     // Agregar archivos si existen
     if (data.files && data.files.length > 0) {
-      Array.from(data.files).forEach((file) => {
+      Array.from(data.files).forEach((file: any) => {
         formData.append('files', file);
       });
     }
 
     if (isEdit) {
-      updateMutation.mutate(formData);
+      updateMutation.mutate(formData as any);
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(formData as any);
     }
   };
 
