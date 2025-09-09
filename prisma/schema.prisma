@@ -67,6 +67,7 @@ model Auction {
   secondaryImage5 String?         // Imagen secundaria 5
   pdfUrl          String?         // PDF descargable
   youtubeUrl      String?         // Video de YouTube
+  auctionLink     String?         // Enlace al sitio oficial de la subasta
   images          AuctionImage[]
   bids            Bid[]
   createdAt       DateTime        @default(now())

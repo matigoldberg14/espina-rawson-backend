@@ -146,6 +146,7 @@ export class AuctionController {
         secondaryImage4,
         secondaryImage5,
         pdfUrl,
+        auctionLink,
       } = req.body;
 
       const auction = await prisma.auction.create({
@@ -167,6 +168,7 @@ export class AuctionController {
           secondaryImage4,
           secondaryImage5,
           pdfUrl,
+          auctionLink,
         },
       });
 
@@ -210,6 +212,7 @@ export class AuctionController {
         secondaryImage4,
         secondaryImage5,
         pdfUrl,
+        auctionLink,
       } = req.body;
 
       const auction = await prisma.auction.update({
@@ -231,6 +234,7 @@ export class AuctionController {
           secondaryImage4,
           secondaryImage5,
           pdfUrl,
+          auctionLink,
         },
         include: {
           images: true,

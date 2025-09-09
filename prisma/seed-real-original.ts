@@ -221,6 +221,7 @@ async function seedRealOriginal() {
       secondaryImage1:
         'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop',
       pdfUrl: 'https://example.com/inmueble-parque-patricios.pdf',
+      auctionLink: 'https://www.remate.com.ar/subasta/inmueble-parque-patricios',
     },
     {
       title: 'Flota de Vehículos Comerciales',
@@ -238,6 +239,7 @@ async function seedRealOriginal() {
       secondaryImage1:
         'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=800&h=600&fit=crop',
       pdfUrl: 'https://example.com/flota-vehiculos.pdf',
+      auctionLink: 'https://www.remate.com.ar/subasta/flota-vehiculos',
     },
     {
       title: 'Maquinaria Agrícola de Alto Rendimiento',
@@ -255,6 +257,7 @@ async function seedRealOriginal() {
       secondaryImage1:
         'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&h=600&fit=crop',
       pdfUrl: 'https://example.com/maquinaria-agricola.pdf',
+      auctionLink: 'https://www.remate.com.ar/subasta/maquinaria-agricola',
     },
   ];
 

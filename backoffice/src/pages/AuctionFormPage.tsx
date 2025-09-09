@@ -46,6 +46,7 @@ const schema = yup.object({
   secondaryImage5: yup.string().url('Debe ser una URL válida').nullable(),
   pdfUrl: yup.string().url('Debe ser una URL válida').nullable(),
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
+  auctionLink: yup.string().url('Debe ser una URL válida').nullable(),
   isFeatured: yup.boolean().default(false),
 });
 
@@ -93,6 +94,7 @@ export default function AuctionFormPage() {
         secondaryImage5: auction.secondaryImage5 || '',
         pdfUrl: auction.pdfUrl || '',
         youtubeUrl: auction.youtubeUrl || '',
+        auctionLink: auction.auctionLink || '',
         isFeatured: auction.isFeatured || false,
       });
     }
@@ -333,6 +335,22 @@ export default function AuctionFormPage() {
               {errors.youtubeUrl && (
                 <p className="text-sm text-destructive">
                   {errors.youtubeUrl.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="auctionLink">Enlace a la subasta oficial</Label>
+              <Input
+                id="auctionLink"
+                type="url"
+                placeholder="https://www.remate.com.ar/subasta/..."
+                {...register('auctionLink')}
+                disabled={loading}
+              />
+              {errors.auctionLink && (
+                <p className="text-sm text-destructive">
+                  {errors.auctionLink.message}
                 </p>
               )}
             </div>
