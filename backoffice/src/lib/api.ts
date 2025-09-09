@@ -120,7 +120,8 @@ export const contentService = {
 
   create: (data: any) => handleFormDataRequest('post', '/content', data),
 
-  update: (id: string, data: any) => handleFormDataRequest('put', `/content/${id}`, data),
+  update: (id: string, data: any) =>
+    handleFormDataRequest('put', `/content/${id}`, data),
 
   delete: (id: string) => api.delete(`/content/${id}`),
 
@@ -137,7 +138,8 @@ export const auctionService = {
 
   create: (data: any) => handleFormDataRequest('post', '/auctions', data),
 
-  update: (id: string, data: any) => handleFormDataRequest('put', `/auctions/${id}`, data),
+  update: (id: string, data: any) =>
+    handleFormDataRequest('put', `/auctions/${id}`, data),
 
   delete: (id: string) => api.delete(`/auctions/${id}`),
 
@@ -171,7 +173,8 @@ export const practiceAreaService = {
 
   create: (data: any) => handleFormDataRequest('post', '/practice-areas', data),
 
-  update: (id: string, data: any) => handleFormDataRequest('put', `/practice-areas/${id}`, data),
+  update: (id: string, data: any) =>
+    handleFormDataRequest('put', `/practice-areas/${id}`, data),
 
   delete: (id: string) => api.delete(`/practice-areas/${id}`),
 
@@ -207,7 +210,8 @@ export const informationService = {
 
   create: (data: any) => handleFormDataRequest('post', '/information', data),
 
-  update: (id: string, data: any) => handleFormDataRequest('put', `/information/${id}`, data),
+  update: (id: string, data: any) =>
+    handleFormDataRequest('put', `/information/${id}`, data),
 
   delete: (id: string) => api.delete(`/information/${id}`),
 

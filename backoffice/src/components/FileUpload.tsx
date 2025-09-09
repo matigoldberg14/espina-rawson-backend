@@ -18,13 +18,13 @@ interface FileUploadProps {
 
 export default function FileUpload({
   label,
-  accept = "image/*,application/pdf",
+  accept = 'image/*,application/pdf',
   multiple = true,
   maxFiles = 10,
   onFilesChange,
   disabled = false,
   value,
-  description = "Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs",
+  description = 'Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs',
   showPreview = true,
 }: FileUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,7 +70,7 @@ export default function FileUpload({
   return (
     <div className="space-y-2">
       <Label htmlFor="file-upload">{label}</Label>
-      
+
       <div className="space-y-3">
         {/* Upload Button */}
         <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export default function FileUpload({
             <Upload className="h-4 w-4" />
             Subir archivos
           </Button>
-          
+
           {value && value.length > 0 && (
             <Button
               type="button"
@@ -115,7 +115,9 @@ export default function FileUpload({
         {/* File Preview */}
         {showPreview && value && value.length > 0 && (
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Archivos seleccionados:</Label>
+            <Label className="text-sm font-medium">
+              Archivos seleccionados:
+            </Label>
             <div className="border rounded-md p-3 space-y-2 max-h-32 overflow-y-auto">
               {Array.from(value).map((file, index) => (
                 <div key={index} className="flex items-center gap-2 text-sm">

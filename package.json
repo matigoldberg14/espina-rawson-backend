@@ -4,8 +4,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
-    "build": "prisma generate && tsc && cd backoffice && rm -rf node_modules dist && npm ci && npm run build && cd ..",
-    "start": "prisma generate && tsc && cd backoffice && rm -rf node_modules dist && npm ci && npm run build && cd .. && prisma db push && node dist/index.js",
+    "build": "prisma generate && tsc && cd backoffice && rm -rf node_modules dist && npm ci --legacy-peer-deps && npm run build && cd ..",
+    "start": "prisma generate && tsc && cd backoffice && rm -rf node_modules dist && npm ci --legacy-peer-deps && npm run build && cd .. && prisma db push && node dist/index.js",
     "seed:initial": "npx ts-node prisma/seed-real-original.ts && npx ts-node prisma/seed-studio.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -22,6 +22,10 @@
   "author": "Espina Rawson",
   "license": "ISC",
   "description": "Backend profesional para Espina Rawson & Asoc.",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@prisma/client": "^6.14.0",
