@@ -151,6 +151,8 @@ export class AuctionController {
 
       // Procesar archivos subidos
       const files = req.files as Express.Multer.File[];
+      console.log('🔍 DEBUG - Files received:', files);
+      console.log('🔍 DEBUG - Files length:', files ? files.length : 'No files');
       let processedMainImage = mainImageUrl;
       let processedSecondaryImages: Record<string, string | undefined> = {
         secondaryImage1,
@@ -259,6 +261,8 @@ export class AuctionController {
 
       // Procesar archivos subidos
       const files = req.files as Express.Multer.File[];
+      console.log('🔍 DEBUG - Files received:', files);
+      console.log('🔍 DEBUG - Files length:', files ? files.length : 'No files');
       let processedMainImage = mainImageUrl;
       let processedSecondaryImages: Record<string, string | undefined> = {
         secondaryImage1,

@@ -51,7 +51,7 @@ router.get('/:id', idValidation, validate, auctionController.getAuctionById);
 router.post(
   '/',
   authorize('SUPER_ADMIN', 'ADMIN'),
-  uploadMultipleImages.array('files', 10), // Permitir hasta 10 archivos (imágenes + PDF)
+  uploadMultipleImages.any(), // Permitir cualquier archivo con cualquier nombre de campo
   auctionValidation,
   validate,
   auctionController.createAuction
@@ -59,7 +59,7 @@ router.post(
 router.put(
   '/:id',
   authorize('SUPER_ADMIN', 'ADMIN'),
-  uploadMultipleImages.array('files', 10), // Permitir hasta 10 archivos (imágenes + PDF)
+  uploadMultipleImages.any(), // Permitir cualquier archivo con cualquier nombre de campo
   idValidation,
   auctionValidation,
   validate,

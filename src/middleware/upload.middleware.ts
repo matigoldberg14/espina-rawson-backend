@@ -77,10 +77,32 @@ export const uploadPDFMiddleware = multer({
   },
 });
 
-// Middleware para múltiples archivos (imágenes)
+// Filtro combinado para imágenes y PDFs
+const combinedFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  // Permitir imágenes y PDFs
+  const isImage = /jpeg|jpg|png|gif|webp/.test(
+    path.extname(file.originalname).toLowerCase()
+  ) && file.mimetype.startsWith('image/');
+  
+  const isPdf = /pdf/.test(
+    path.extname(file.originalname).toLowerCase()
+  ) && file.mimetype === 'application/pdf';
+
+  if (isImage || isPdf) {
+    cb(null, true);
+  } else {
+    cb(new Error('Solo se permiten imágenes (JPEG, PNG, GIF, WebP) y archivos PDF'));
+  }
+};
+
+// Middleware para múltiples archivos (imágenes y PDFs)
 export const uploadMultipleImages = multer({
   storage,
-  fileFilter: imageFilter,
+  fileFilter: combinedFilter,
   limits: {
     fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'),
     files: 10, // Máximo 10 archivos
