@@ -184,7 +184,7 @@ async function seedRealOriginal() {
       key: 'social_links',
       value: {
         linkedin: 'https://linkedin.com/company/espina-rawson',
-        twitter: 'https://twitter.com/espinarawson',
+        youtube: 'https://youtube.com/@espinarawson',
       },
       description: 'Enlaces a redes sociales',
     },
