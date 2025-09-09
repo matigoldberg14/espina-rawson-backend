@@ -163,7 +163,13 @@ app.use(errorHandler);
 // Función para inicializar el servidor
 async function startServer() {
   try {
+    console.log('🚀 Iniciando servidor Espina Rawson...');
+    console.log(`📦 NODE_ENV: ${process.env.NODE_ENV}`);
+    console.log(`🔗 DATABASE_URL configurado: ${process.env.DATABASE_URL ? 'SÍ' : 'NO'}`);
+    console.log(`🌐 PORT: ${PORT}`);
+    
     // Conectar a la base de datos
+    console.log('🔄 Conectando a la base de datos...');
     await prisma.$connect();
     console.log('✅ Conexión a la base de datos establecida');
 
