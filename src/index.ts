@@ -112,7 +112,7 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     service: 'espina-rawson-backend',
-    version: '1.0.28'
+    version: '1.0.28',
   });
 });
 
