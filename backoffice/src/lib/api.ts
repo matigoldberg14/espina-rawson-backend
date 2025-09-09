@@ -121,9 +121,25 @@ export const auctionService = {
 
   getById: (id: string) => api.get(`/auctions/${id}`),
 
-  create: (data: any) => api.post('/auctions', data),
+  create: (data: any) => {
+    // Si data es FormData, usar multipart/form-data
+    if (data instanceof FormData) {
+      return api.post('/auctions', data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.post('/auctions', data);
+  },
 
-  update: (id: string, data: any) => api.put(`/auctions/${id}`, data),
+  update: (id: string, data: any) => {
+    // Si data es FormData, usar multipart/form-data
+    if (data instanceof FormData) {
+      return api.put(`/auctions/${id}`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    }
+    return api.put(`/auctions/${id}`, data);
+  },
 
   delete: (id: string) => api.delete(`/auctions/${id}`),
 
