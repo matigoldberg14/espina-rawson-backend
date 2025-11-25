@@ -40,14 +40,9 @@ const schema = yup.object({
     .required('Precio inicial requerido'),
   endDate: yup.string().required('Fecha de finalización requerida'),
   status: yup.string().oneOf(['DRAFT', 'PUBLISHED']).default('DRAFT'),
-  mainImageUrl: yup.string().url('Debe ser una URL válida').nullable(),
-  secondaryImage1: yup.string().url('Debe ser una URL válida').nullable(),
-  secondaryImage2: yup.string().url('Debe ser una URL válida').nullable(),
-  secondaryImage3: yup.string().url('Debe ser una URL válida').nullable(),
-  secondaryImage4: yup.string().url('Debe ser una URL válida').nullable(),
-  secondaryImage5: yup.string().url('Debe ser una URL válida').nullable(),
-  pdfUrl: yup.string().url('Debe ser una URL válida').nullable(),
-  files: yup.mixed().nullable(), // Archivos subidos
+  mainImageFile: yup.mixed().nullable(), // Archivo de imagen principal
+  secondaryImages: yup.mixed().nullable(), // Archivos de imágenes secundarias
+  pdfFile: yup.mixed().nullable(), // Archivo PDF
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
   auctionLink: yup.string().url('Debe ser una URL válida').nullable(),
   isFeatured: yup.boolean().default(false),
@@ -87,6 +82,7 @@ export default function AuctionFormPage() {
         description: auction.description,
         type: auction.type || 'general',
         location: auction.location || '',
+        currency: auction.currency || 'ARS',
         startingPrice: Number(auction.startingPrice),
         endDate: (() => {
           const date = new Date(auction.endDate);
@@ -96,17 +92,12 @@ export default function AuctionFormPage() {
           return localDate.toISOString().split('T')[0];
         })(),
         status: auction.status,
-        mainImageUrl: auction.mainImageUrl || '',
-        secondaryImage1: auction.secondaryImage1 || '',
-        secondaryImage2: auction.secondaryImage2 || '',
-        secondaryImage3: auction.secondaryImage3 || '',
-        secondaryImage4: auction.secondaryImage4 || '',
-        secondaryImage5: auction.secondaryImage5 || '',
-        pdfUrl: auction.pdfUrl || '',
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
         isFeatured: auction.isFeatured || false,
-        files: null, // Archivos subidos
+        mainImageFile: null,
+        secondaryImages: null,
+        pdfFile: null,
       });
     }
   }, [auction, reset]);
@@ -135,18 +126,29 @@ export default function AuctionFormPage() {
     // Crear FormData para enviar archivos
     const formData = new FormData();
 
-    // Agregar todos los campos del formulario
+    // Agregar todos los campos del formulario (excepto archivos)
     Object.keys(data).forEach((key) => {
-      if (key !== 'files' && data[key] !== null && data[key] !== '') {
+      if (!['mainImageFile', 'secondaryImages', 'pdfFile'].includes(key) && 
+          data[key] !== null && data[key] !== '') {
         formData.append(key, String(data[key]));
       }
     });
 
-    // Agregar archivos si existen
-    if (data.files && data.files.length > 0) {
-      Array.from(data.files).forEach((file: any) => {
+    // Agregar imagen principal
+    if (data.mainImageFile && data.mainImageFile.length > 0) {
+      formData.append('files', data.mainImageFile[0]);
+    }
+
+    // Agregar imágenes secundarias
+    if (data.secondaryImages && data.secondaryImages.length > 0) {
+      Array.from(data.secondaryImages).forEach((file: any) => {
         formData.append('files', file);
       });
+    }
+
+    // Agregar PDF
+    if (data.pdfFile && data.pdfFile.length > 0) {
+      formData.append('files', data.pdfFile[0]);
     }
 
     if (isEdit) {
@@ -235,137 +237,53 @@ export default function AuctionFormPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="mainImageUrl">URL de imagen principal</Label>
-              <Input
-                id="mainImageUrl"
-                type="url"
-                placeholder="https://ejemplo.com/imagen.jpg"
-                {...register('mainImageUrl')}
-                disabled={loading}
-              />
-              {errors.mainImageUrl && (
-                <p className="text-sm text-destructive">
-                  {String(errors.mainImageUrl.message)}
-                </p>
-              )}
-            </div>
-
             <FileUpload
-              label="O subir archivos desde la computadora"
-              accept="image/*,application/pdf"
-              multiple={true}
-              maxFiles={10}
-              onFilesChange={(files) => setValue('files', files)}
+              label="Imagen principal"
+              accept="image/*"
+              multiple={false}
+              maxFiles={1}
+              onFilesChange={(files) => setValue('mainImageFile', files)}
               disabled={loading}
-              description="Puedes subir imágenes (JPG, PNG, GIF, WebP) y PDFs. La primera imagen será la principal."
+              description="Sube la imagen principal de la subasta (JPG, PNG, GIF, WebP)"
               showPreview={true}
             />
-            {errors.files && (
+            {errors.mainImageFile && (
               <p className="text-sm text-destructive">
-                {String(errors.files.message)}
+                {String(errors.mainImageFile.message)}
               </p>
             )}
 
-            <div className="space-y-4">
-              <Label>Imágenes secundarias (hasta 5)</Label>
+            <FileUpload
+              label="Imágenes secundarias (hasta 5)"
+              accept="image/*"
+              multiple={true}
+              maxFiles={5}
+              onFilesChange={(files) => setValue('secondaryImages', files)}
+              disabled={loading}
+              description="Sube hasta 5 imágenes adicionales de la subasta"
+              showPreview={true}
+            />
+            {errors.secondaryImages && (
+              <p className="text-sm text-destructive">
+                {String(errors.secondaryImages.message)}
+              </p>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="secondaryImage1">Imagen secundaria 1</Label>
-                <Input
-                  id="secondaryImage1"
-                  type="url"
-                  placeholder="https://ejemplo.com/imagen2.jpg"
-                  {...register('secondaryImage1')}
-                  disabled={loading}
-                />
-                {errors.secondaryImage1 && (
-                  <p className="text-sm text-destructive">
-                    {String(errors.secondaryImage1.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondaryImage2">Imagen secundaria 2</Label>
-                <Input
-                  id="secondaryImage2"
-                  type="url"
-                  placeholder="https://ejemplo.com/imagen3.jpg"
-                  {...register('secondaryImage2')}
-                  disabled={loading}
-                />
-                {errors.secondaryImage2 && (
-                  <p className="text-sm text-destructive">
-                    {String(errors.secondaryImage2.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondaryImage3">Imagen secundaria 3</Label>
-                <Input
-                  id="secondaryImage3"
-                  type="url"
-                  placeholder="https://ejemplo.com/imagen4.jpg"
-                  {...register('secondaryImage3')}
-                  disabled={loading}
-                />
-                {errors.secondaryImage3 && (
-                  <p className="text-sm text-destructive">
-                    {String(errors.secondaryImage3.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondaryImage4">Imagen secundaria 4</Label>
-                <Input
-                  id="secondaryImage4"
-                  type="url"
-                  placeholder="https://ejemplo.com/imagen5.jpg"
-                  {...register('secondaryImage4')}
-                  disabled={loading}
-                />
-                {errors.secondaryImage4 && (
-                  <p className="text-sm text-destructive">
-                    {String(errors.secondaryImage4.message)}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="secondaryImage5">Imagen secundaria 5</Label>
-                <Input
-                  id="secondaryImage5"
-                  type="url"
-                  placeholder="https://ejemplo.com/imagen6.jpg"
-                  {...register('secondaryImage5')}
-                  disabled={loading}
-                />
-                {errors.secondaryImage5 && (
-                  <p className="text-sm text-destructive">
-                    {String(errors.secondaryImage5.message)}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pdfUrl">URL del PDF descargable</Label>
-              <Input
-                id="pdfUrl"
-                type="url"
-                placeholder="https://ejemplo.com/documento.pdf"
-                {...register('pdfUrl')}
-                disabled={loading}
-              />
-              {errors.pdfUrl && (
-                <p className="text-sm text-destructive">
-                  {String(errors.pdfUrl.message)}
-                </p>
-              )}
-            </div>
+            <FileUpload
+              label="PDF descargable"
+              accept="application/pdf"
+              multiple={false}
+              maxFiles={1}
+              onFilesChange={(files) => setValue('pdfFile', files)}
+              disabled={loading}
+              description="Sube un archivo PDF con información adicional de la subasta"
+              showPreview={true}
+            />
+            {errors.pdfFile && (
+              <p className="text-sm text-destructive">
+                {String(errors.pdfFile.message)}
+              </p>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="youtubeUrl">URL de video de YouTube</Label>
