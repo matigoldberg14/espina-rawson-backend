@@ -128,8 +128,11 @@ export default function AuctionFormPage() {
 
     // Agregar todos los campos del formulario (excepto archivos)
     Object.keys(data).forEach((key) => {
-      if (!['mainImageFile', 'secondaryImages', 'pdfFile'].includes(key) && 
-          data[key] !== null && data[key] !== '') {
+      if (
+        !['mainImageFile', 'secondaryImages', 'pdfFile'].includes(key) &&
+        data[key] !== null &&
+        data[key] !== ''
+      ) {
         formData.append(key, String(data[key]));
       }
     });
