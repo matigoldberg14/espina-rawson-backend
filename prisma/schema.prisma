@@ -53,6 +53,7 @@ model Auction {
   description     String          @db.Text
   type            String?         // inmuebles, vehiculos, maquinaria, tecnologia
   location        String?
+  currency        String?         @default("ARS") @db.VarChar(3) // ARS o USD
   startingPrice   Decimal         @db.Decimal(10, 2)
   currentPrice    Decimal?        @db.Decimal(10, 2)
   endDate         DateTime
