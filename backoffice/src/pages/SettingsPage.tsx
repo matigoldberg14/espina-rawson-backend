@@ -120,6 +120,35 @@ export default function SettingsPage() {
                           </div>
                         ))}
                       </div>
+                    ) : setting.key === 'contact_address' ? (
+                      <div className="space-y-2">
+                        {Object.entries(
+                          (editedSettings[setting.key] ||
+                            setting.value) as Record<string, string>
+                        ).map(([field, value]) => (
+                          <div key={field} className="space-y-1">
+                            <Label className="capitalize">
+                              {field === 'address' ? 'Dirección' : 'Teléfono'}
+                            </Label>
+                            <Input
+                              value={value}
+                              placeholder={
+                                field === 'address'
+                                  ? 'Av. Corrientes 1234, CABA'
+                                  : '(011) 1234-5678'
+                              }
+                              onChange={(e) => {
+                                const newValue = {
+                                  ...(editedSettings[setting.key] ||
+                                    setting.value),
+                                  [field]: e.target.value,
+                                };
+                                handleChange(setting.key, newValue);
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     ) : (
                       <Input
                         id={setting.key}

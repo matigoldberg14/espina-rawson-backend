@@ -33,6 +33,7 @@ const schema = yup.object({
     ])
     .required('Tipo requerido'),
   location: yup.string(),
+  currency: yup.string().oneOf(['ARS', 'USD']).default('ARS'),
   startingPrice: yup
     .number()
     .positive('Debe ser un valor positivo')
@@ -87,7 +88,13 @@ export default function AuctionFormPage() {
         type: auction.type || 'general',
         location: auction.location || '',
         startingPrice: Number(auction.startingPrice),
-        endDate: new Date(auction.endDate).toISOString().split('T')[0],
+        endDate: (() => {
+          const date = new Date(auction.endDate);
+          // Ajustar para timezone local
+          const offset = date.getTimezoneOffset();
+          const localDate = new Date(date.getTime() - offset * 60 * 1000);
+          return localDate.toISOString().split('T')[0];
+        })(),
         status: auction.status,
         mainImageUrl: auction.mainImageUrl || '',
         secondaryImage1: auction.secondaryImage1 || '',
@@ -405,9 +412,27 @@ export default function AuctionFormPage() {
               </Label>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="startingPrice">Precio inicial (USD)</Label>
+                <Label htmlFor="currency">Moneda</Label>
+                <select
+                  id="currency"
+                  className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+                  {...register('currency')}
+                  disabled={loading}
+                >
+                  <option value="ARS">Pesos Argentinos (ARS)</option>
+                  <option value="USD">Dólares Americanos (USD)</option>
+                </select>
+                {errors.currency && (
+                  <p className="text-sm text-destructive">
+                    {String(errors.currency.message)}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="startingPrice">Precio inicial</Label>
                 <Input
                   id="startingPrice"
                   type="number"
