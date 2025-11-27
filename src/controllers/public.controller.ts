@@ -121,9 +121,15 @@ export class PublicController {
         prisma.auction.count({ where }),
       ]);
 
+      // Procesar el campo details en cada subasta
+      const processedAuctions = auctions.map(auction => ({
+        ...auction,
+        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
+      }));
+
       res.json({
         success: true,
-        data: auctions,
+        data: processedAuctions,
         pagination: {
           page: Number(page),
           limit: Number(limit),
@@ -172,9 +178,15 @@ export class PublicController {
         orderBy: { order: 'asc' },
       });
 
+      // Procesar el campo details en cada subasta
+      const processedAuctions = auctions.map(auction => ({
+        ...auction,
+        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
+      }));
+
       res.json({
         success: true,
-        data: auctions,
+        data: processedAuctions,
       });
     } catch (error) {
       next(error);
@@ -237,9 +249,15 @@ export class PublicController {
         });
       }
 
+      // Procesar el campo details para asegurar que sea una cadena
+      const processedAuction = {
+        ...auction,
+        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
+      };
+
       res.json({
         success: true,
-        data: auction,
+        data: processedAuction,
       });
     } catch (error) {
       next(error);
