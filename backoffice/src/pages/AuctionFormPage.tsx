@@ -17,6 +17,7 @@ import {
 import toast from 'react-hot-toast';
 import { ArrowLeft } from 'lucide-react';
 import FileUpload from '../components/FileUpload';
+import { RichTextEditor } from '../components/RichTextEditor';
 
 const schema = yup.object({
   title: yup.string().required('Título requerido'),
@@ -71,6 +72,7 @@ export default function AuctionFormPage() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<any>({
     resolver: yupResolver(schema),
@@ -95,7 +97,7 @@ export default function AuctionFormPage() {
         status: auction.status,
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
-        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details, null, 2)) : '',
+        details: auction.details || '',
         isFeatured: auction.isFeatured || false,
         mainImageFile: null,
         secondaryImages: null,
@@ -322,31 +324,15 @@ export default function AuctionFormPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="details">Detalles Técnicos</Label>
-              <textarea
-                id="details"
-                placeholder="Ingresa los detalles técnicos en formato JSON o texto estructurado. Ejemplo:
-{
-  &quot;Marca&quot;: &quot;Renault&quot;,
-  &quot;Modelo&quot;: &quot;Duster PH2&quot;,
-  &quot;Año&quot;: &quot;2016&quot;,
-  &quot;Motor&quot;: &quot;1.6 Naftero&quot;,
-  &quot;Kilometraje&quot;: &quot;85,000 km&quot;
-}"
-                className="w-full min-h-[120px] rounded-md border border-input bg-transparent px-3 py-2 text-sm font-mono"
-                {...register('details')}
-                disabled={loading}
-              />
-              <p className="text-xs text-muted-foreground">
-                Puedes usar formato JSON para detalles estructurados o texto libre. Los detalles aparecerán en la pestaña "Detalles Técnicos" del frontend.
-              </p>
-              {errors.details && (
-                <p className="text-sm text-destructive">
-                  {String(errors.details.message)}
-                </p>
-              )}
-            </div>
+            <RichTextEditor
+              label="Detalles Técnicos"
+              value={watch('details') || ''}
+              onChange={(value) => setValue('details', value)}
+              placeholder="Escribe los detalles técnicos usando el editor. Puedes usar negritas, cursivas, listas, colores, etc."
+              disabled={loading}
+              error={errors.details ? String(errors.details.message) : undefined}
+              description="Usa las herramientas del editor para dar formato al texto. Los detalles aparecerán en la pestaña 'Detalles Técnicos' del frontend."
+            />
 
             <div className="flex items-center space-x-2">
               <input

@@ -244,7 +244,7 @@ export class AuctionController {
           secondaryImage5: processedSecondaryImages.secondaryImage5,
           pdfUrl: processedPdfUrl,
           auctionLink,
-          details: details ? (typeof details === 'string' ? JSON.parse(details) : details) : null,
+          details: details || null,
         },
       });
 
@@ -385,7 +385,7 @@ export class AuctionController {
           secondaryImage5: processedSecondaryImages.secondaryImage5,
           pdfUrl: processedPdfUrl,
           auctionLink,
-          details: details ? (typeof details === 'string' ? JSON.parse(details) : details) : null,
+          details: details || null,
         },
         include: {
           images: true,
