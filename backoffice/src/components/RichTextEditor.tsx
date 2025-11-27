@@ -85,32 +85,34 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </p>
       )}
       
-      <style jsx global>{`
-        .ql-editor {
-          min-height: 120px;
-          font-family: inherit;
-        }
-        
-        .ql-toolbar {
-          border-bottom: 1px solid #e2e8f0;
-          background-color: #f8fafc;
-        }
-        
-        .ql-container {
-          border-top: none;
-        }
-        
-        .ql-editor.ql-blank::before {
-          color: #94a3b8;
-          font-style: normal;
-        }
-        
-        /* Estilos para modo disabled */
-        .ql-toolbar.ql-disabled {
-          opacity: 0.6;
-          pointer-events: none;
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .ql-editor {
+            min-height: 120px;
+            font-family: inherit;
+          }
+          
+          .ql-toolbar {
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+          }
+          
+          .ql-container {
+            border-top: none;
+          }
+          
+          .ql-editor.ql-blank::before {
+            color: #94a3b8;
+            font-style: normal;
+          }
+          
+          /* Estilos para modo disabled */
+          .ql-toolbar.ql-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+          }
+        `
+      }} />
     </div>
   );
 };
