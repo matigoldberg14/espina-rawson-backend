@@ -60,8 +60,13 @@ export class ImgBBService {
       throw new Error('IMGBB_API_KEY environment variable is required for image uploads');
     }
     
+    if (!imageBuffer) {
+      throw new Error('Image buffer is required for upload');
+    }
+    
     try {
       console.log('📤 Subiendo imagen a ImgBB:', filename);
+      console.log('📊 Buffer size:', imageBuffer.length, 'bytes');
 
       // Convertir buffer a base64
       const base64Image = imageBuffer.toString('base64');

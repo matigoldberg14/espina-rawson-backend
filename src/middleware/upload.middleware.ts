@@ -3,22 +3,9 @@ import path from 'path';
 import { Request } from 'express';
 import crypto from 'crypto';
 
-// Configurar almacenamiento
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename: (req, file, cb) => {
-    // Generar nombre único
-    const uniqueSuffix = crypto.randomBytes(6).toString('hex');
-    const timestamp = Date.now();
-    const ext = path.extname(file.originalname);
-    const name = path.basename(file.originalname, ext);
-    const sanitizedName = name.replace(/[^a-zA-Z0-9]/g, '-');
-
-    cb(null, `${sanitizedName}-${timestamp}-${uniqueSuffix}${ext}`);
-  },
-});
+// Configurar almacenamiento en memoria para ImgBB
+// Ya no necesitamos almacenamiento en disco porque subimos directamente a ImgBB
+const storage = multer.memoryStorage();
 
 // Filtro de archivos para imágenes
 const imageFilter = (
