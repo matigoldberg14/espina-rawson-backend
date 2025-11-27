@@ -69,6 +69,7 @@ model Auction {
   pdfUrl          String?         // PDF descargable
   youtubeUrl      String?         // Video de YouTube
   auctionLink     String?         // Enlace al sitio oficial de la subasta
+  details         Json?           // Detalles técnicos de la subasta
   images          AuctionImage[]
   bids            Bid[]
   createdAt       DateTime        @default(now())
