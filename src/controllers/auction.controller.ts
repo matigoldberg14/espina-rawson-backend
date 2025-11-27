@@ -148,6 +148,7 @@ export class AuctionController {
         secondaryImage5,
         pdfUrl,
         auctionLink,
+        details,
       } = req.body;
 
       // Procesar archivos subidos
@@ -218,6 +219,7 @@ export class AuctionController {
           secondaryImage5: processedSecondaryImages.secondaryImage5,
           pdfUrl: processedPdfUrl,
           auctionLink,
+          details: details ? (typeof details === 'string' ? JSON.parse(details) : details) : null,
         },
       });
 
@@ -263,6 +265,7 @@ export class AuctionController {
         secondaryImage5,
         pdfUrl,
         auctionLink,
+        details,
       } = req.body;
 
       // Procesar archivos subidos
@@ -333,6 +336,7 @@ export class AuctionController {
           secondaryImage5: processedSecondaryImages.secondaryImage5,
           pdfUrl: processedPdfUrl,
           auctionLink,
+          details: details ? (typeof details === 'string' ? JSON.parse(details) : details) : null,
         },
         include: {
           images: true,

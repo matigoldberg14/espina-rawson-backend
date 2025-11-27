@@ -45,6 +45,7 @@ const schema = yup.object({
   pdfFile: yup.mixed().nullable(), // Archivo PDF
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
   auctionLink: yup.string().url('Debe ser una URL válida').nullable(),
+  details: yup.string().nullable(),
   isFeatured: yup.boolean().default(false),
 });
 
@@ -94,6 +95,7 @@ export default function AuctionFormPage() {
         status: auction.status,
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
+        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details, null, 2)) : '',
         isFeatured: auction.isFeatured || false,
         mainImageFile: null,
         secondaryImages: null,
@@ -316,6 +318,32 @@ export default function AuctionFormPage() {
               {errors.auctionLink && (
                 <p className="text-sm text-destructive">
                   {String(errors.auctionLink.message)}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="details">Detalles Técnicos</Label>
+              <textarea
+                id="details"
+                placeholder="Ingresa los detalles técnicos en formato JSON o texto estructurado. Ejemplo:
+{
+  &quot;Marca&quot;: &quot;Renault&quot;,
+  &quot;Modelo&quot;: &quot;Duster PH2&quot;,
+  &quot;Año&quot;: &quot;2016&quot;,
+  &quot;Motor&quot;: &quot;1.6 Naftero&quot;,
+  &quot;Kilometraje&quot;: &quot;85,000 km&quot;
+}"
+                className="w-full min-h-[120px] rounded-md border border-input bg-transparent px-3 py-2 text-sm font-mono"
+                {...register('details')}
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Puedes usar formato JSON para detalles estructurados o texto libre. Los detalles aparecerán en la pestaña "Detalles Técnicos" del frontend.
+              </p>
+              {errors.details && (
+                <p className="text-sm text-destructive">
+                  {String(errors.details.message)}
                 </p>
               )}
             </div>
