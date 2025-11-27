@@ -4,11 +4,37 @@ import FormData from 'form-data';
 interface ImgBBResponse {
   data: {
     id: string;
+    title: string;
+    url_viewer: string;
     url: string;
     display_url: string;
+    width: string;
+    height: string;
+    size: string;
+    time: string;
+    expiration: string;
+    image: {
+      filename: string;
+      name: string;
+      mime: string;
+      extension: string;
+      url: string;
+    };
+    thumb: {
+      filename: string;
+      name: string;
+      mime: string;
+      extension: string;
+      url: string;
+    };
+    medium: {
+      filename: string;
+      name: string;
+      mime: string;
+      extension: string;
+      url: string;
+    };
     delete_url: string;
-    title: string;
-    size: number;
   };
   success: boolean;
   status: number;
@@ -27,6 +53,7 @@ export class ImgBBService {
 
   /**
    * Sube una imagen a ImgBB y retorna la URL
+   * IMPORTANTE: NO incluimos 'expiration' para que las imágenes sean PERMANENTES
    */
   async uploadImage(imageBuffer: Buffer, filename: string): Promise<string> {
     try {
@@ -53,8 +80,15 @@ export class ImgBBService {
         throw new Error('ImgBB upload failed');
       }
 
+      // Usar display_url que es la URL optimizada para mostrar
       const imageUrl = response.data.data.display_url;
       console.log('✅ Imagen subida exitosamente a ImgBB:', imageUrl);
+      console.log('📊 Detalles de la imagen:', {
+        id: response.data.data.id,
+        size: response.data.data.size,
+        dimensions: `${response.data.data.width}x${response.data.data.height}`,
+        expiration: response.data.data.expiration === '0' ? 'Permanente' : response.data.data.expiration
+      });
 
       return imageUrl;
     } catch (error) {
