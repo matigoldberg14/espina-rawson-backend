@@ -102,6 +102,7 @@ export class PublicController {
             pdfUrl: true,
             youtubeUrl: true,
             auctionLink: true, // Enlace oficial de la subasta
+            details: true, // Detalles técnicos en HTML
             type: true,
             isFeatured: true,
             images: {
@@ -159,6 +160,7 @@ export class PublicController {
           startingPrice: true,
           currentPrice: true,
           endDate: true,
+          details: true, // Detalles técnicos en HTML
           images: {
             where: { isPrimary: true },
             select: {
@@ -210,6 +212,7 @@ export class PublicController {
           pdfUrl: true,
           youtubeUrl: true,
           auctionLink: true, // Enlace oficial de la subasta
+          details: true, // Detalles técnicos en HTML
           type: true,
           isFeatured: true,
           metadata: true,
