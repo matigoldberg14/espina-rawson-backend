@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../index';
 import { ActivityLogService } from '../services/activityLog.service';
 import { cleanupFiles } from '../middleware/upload.middleware';
+import { imgbbService } from '../services/imgbb.service';
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -151,7 +152,7 @@ export class AuctionController {
         details,
       } = req.body;
 
-      // Procesar archivos subidos
+      // Procesar archivos subidos con ImgBB
       const files = req.files as Express.Multer.File[];
       console.log('🔍 DEBUG - Files received:', files);
       console.log(
@@ -169,32 +170,54 @@ export class AuctionController {
       let processedPdfUrl = pdfUrl;
 
       if (files && files.length > 0) {
-        const baseUrl =
-          process.env.BASE_URL ||
-          'https://espina-rawson-backend-production.up.railway.app';
+        try {
+          // Procesar imágenes con ImgBB
+          const imageFiles = files.filter((file) =>
+            file.mimetype.startsWith('image/')
+          );
+          
+          if (imageFiles.length > 0) {
+            console.log(`📤 Subiendo ${imageFiles.length} imágenes a ImgBB...`);
+            
+            // Subir imagen principal (primera imagen)
+            const mainImageUrl = await imgbbService.uploadImage(
+              imageFiles[0].buffer,
+              imageFiles[0].originalname
+            );
+            processedMainImage = mainImageUrl;
+            console.log('✅ Imagen principal subida:', mainImageUrl);
 
-        // Procesar imágenes
-        const imageFiles = files.filter((file) =>
-          file.mimetype.startsWith('image/')
-        );
-        if (imageFiles.length > 0) {
-          processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
+            // Subir imágenes secundarias (hasta 5)
+            const secondaryImages = imageFiles.slice(1, 6);
+            for (let i = 0; i < secondaryImages.length; i++) {
+              const file = secondaryImages[i];
+              const fieldName = `secondaryImage${i + 1}`;
+              
+              const imageUrl = await imgbbService.uploadImage(
+                file.buffer,
+                file.originalname
+              );
+              processedSecondaryImages[fieldName] = imageUrl;
+              console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
+            }
+          }
 
-          // Asignar imágenes secundarias
-          imageFiles.slice(1, 6).forEach((file, index) => {
-            const fieldName = `secondaryImage${index + 1}`;
-            processedSecondaryImages[
-              fieldName
-            ] = `${baseUrl}/uploads/${file.filename}`;
-          });
-        }
-
-        // Procesar PDF
-        const pdfFile = files.find(
-          (file) => file.mimetype === 'application/pdf'
-        );
-        if (pdfFile) {
-          processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
+          // Procesar PDF con ImgBB (ImgBB también acepta PDFs)
+          const pdfFile = files.find(
+            (file) => file.mimetype === 'application/pdf'
+          );
+          if (pdfFile) {
+            console.log('📤 Subiendo PDF a ImgBB...');
+            const pdfUrl = await imgbbService.uploadImage(
+              pdfFile.buffer,
+              pdfFile.originalname
+            );
+            processedPdfUrl = pdfUrl;
+            console.log('✅ PDF subido:', pdfUrl);
+          }
+        } catch (error) {
+          console.error('❌ Error subiendo archivos a ImgBB:', error);
+          throw new Error(`Error uploading files to ImgBB: ${error}`);
         }
       }
 
@@ -268,7 +291,7 @@ export class AuctionController {
         details,
       } = req.body;
 
-      // Procesar archivos subidos
+      // Procesar archivos subidos con ImgBB
       const files = req.files as Express.Multer.File[];
       console.log('🔍 DEBUG - Files received:', files);
       console.log(
@@ -286,32 +309,54 @@ export class AuctionController {
       let processedPdfUrl = pdfUrl;
 
       if (files && files.length > 0) {
-        const baseUrl =
-          process.env.BASE_URL ||
-          'https://espina-rawson-backend-production.up.railway.app';
+        try {
+          // Procesar imágenes con ImgBB
+          const imageFiles = files.filter((file) =>
+            file.mimetype.startsWith('image/')
+          );
+          
+          if (imageFiles.length > 0) {
+            console.log(`📤 Subiendo ${imageFiles.length} imágenes a ImgBB...`);
+            
+            // Subir imagen principal (primera imagen)
+            const mainImageUrl = await imgbbService.uploadImage(
+              imageFiles[0].buffer,
+              imageFiles[0].originalname
+            );
+            processedMainImage = mainImageUrl;
+            console.log('✅ Imagen principal subida:', mainImageUrl);
 
-        // Procesar imágenes
-        const imageFiles = files.filter((file) =>
-          file.mimetype.startsWith('image/')
-        );
-        if (imageFiles.length > 0) {
-          processedMainImage = `${baseUrl}/uploads/${imageFiles[0].filename}`;
+            // Subir imágenes secundarias (hasta 5)
+            const secondaryImages = imageFiles.slice(1, 6);
+            for (let i = 0; i < secondaryImages.length; i++) {
+              const file = secondaryImages[i];
+              const fieldName = `secondaryImage${i + 1}`;
+              
+              const imageUrl = await imgbbService.uploadImage(
+                file.buffer,
+                file.originalname
+              );
+              processedSecondaryImages[fieldName] = imageUrl;
+              console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
+            }
+          }
 
-          // Asignar imágenes secundarias
-          imageFiles.slice(1, 6).forEach((file, index) => {
-            const fieldName = `secondaryImage${index + 1}`;
-            processedSecondaryImages[
-              fieldName
-            ] = `${baseUrl}/uploads/${file.filename}`;
-          });
-        }
-
-        // Procesar PDF
-        const pdfFile = files.find(
-          (file) => file.mimetype === 'application/pdf'
-        );
-        if (pdfFile) {
-          processedPdfUrl = `${baseUrl}/uploads/${pdfFile.filename}`;
+          // Procesar PDF con ImgBB (ImgBB también acepta PDFs)
+          const pdfFile = files.find(
+            (file) => file.mimetype === 'application/pdf'
+          );
+          if (pdfFile) {
+            console.log('📤 Subiendo PDF a ImgBB...');
+            const pdfUrl = await imgbbService.uploadImage(
+              pdfFile.buffer,
+              pdfFile.originalname
+            );
+            processedPdfUrl = pdfUrl;
+            console.log('✅ PDF subido:', pdfUrl);
+          }
+        } catch (error) {
+          console.error('❌ Error subiendo archivos a ImgBB:', error);
+          throw new Error(`Error uploading files to ImgBB: ${error}`);
         }
       }
 
