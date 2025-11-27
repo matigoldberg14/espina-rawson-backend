@@ -71,6 +71,10 @@ export default function SettingsPage() {
       title: 'Redes Sociales',
       settings: ['social_links'],
     },
+    auctions: {
+      title: 'Configuración de Subastas',
+      settings: ['auction_terms_conditions'],
+    },
   };
 
   return (
