@@ -217,7 +217,9 @@ export class AuctionController {
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos a ImgBB:', error);
-          throw new Error(`Error uploading files to ImgBB: ${error}`);
+          console.warn('⚠️ Continuando sin subir archivos a ImgBB. Verifique que IMGBB_API_KEY esté configurado.');
+          // No lanzar error para permitir que la aplicación continúe funcionando
+          // Los archivos simplemente no se subirán a ImgBB hasta que se configure la API key
         }
       }
 
@@ -356,7 +358,9 @@ export class AuctionController {
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos a ImgBB:', error);
-          throw new Error(`Error uploading files to ImgBB: ${error}`);
+          console.warn('⚠️ Continuando sin subir archivos a ImgBB. Verifique que IMGBB_API_KEY esté configurado.');
+          // No lanzar error para permitir que la aplicación continúe funcionando
+          // Los archivos simplemente no se subirán a ImgBB hasta que se configure la API key
         }
       }
 

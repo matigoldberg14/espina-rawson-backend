@@ -47,7 +47,7 @@ export class ImgBBService {
   constructor() {
     this.apiKey = process.env.IMGBB_API_KEY || '';
     if (!this.apiKey) {
-      throw new Error('IMGBB_API_KEY environment variable is required');
+      console.warn('⚠️ IMGBB_API_KEY environment variable not found. ImgBB service will not work until API key is provided.');
     }
   }
 
@@ -56,6 +56,10 @@ export class ImgBBService {
    * IMPORTANTE: NO incluimos 'expiration' para que las imágenes sean PERMANENTES
    */
   async uploadImage(imageBuffer: Buffer, filename: string): Promise<string> {
+    if (!this.apiKey) {
+      throw new Error('IMGBB_API_KEY environment variable is required for image uploads');
+    }
+    
     try {
       console.log('📤 Subiendo imagen a ImgBB:', filename);
 
@@ -125,6 +129,10 @@ export class ImgBBService {
    * Verifica si la API key es válida
    */
   async validateApiKey(): Promise<boolean> {
+    if (!this.apiKey) {
+      return false;
+    }
+    
     try {
       // Crear una imagen de prueba pequeña (1x1 pixel PNG transparente)
       const testImageBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
