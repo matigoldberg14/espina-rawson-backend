@@ -66,7 +66,9 @@ model Auction {
   secondaryImage3 String?         // Imagen secundaria 3
   secondaryImage4 String?         // Imagen secundaria 4
   secondaryImage5 String?         // Imagen secundaria 5
-  pdfUrl          String?         // PDF descargable
+  pdfUrl          String?         // PDF descargable (URL externa)
+  pdfData         Bytes?          // PDF almacenado en BD
+  pdfFilename     String?         // Nombre del archivo PDF
   youtubeUrl      String?         // Video de YouTube
   auctionLink     String?         // Enlace al sitio oficial de la subasta
   details         Json?           // Detalles técnicos de la subasta

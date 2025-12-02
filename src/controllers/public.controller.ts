@@ -69,7 +69,7 @@ export class PublicController {
     next: NextFunction
   ) => {
     try {
-      const { page = 1, limit = 12 } = req.query;
+      const { page = 1, limit = 50 } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
       const where = {

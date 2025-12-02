@@ -698,4 +698,35 @@ export class AuctionController {
       next(error);
     }
   };
+
+  // Servir PDF desde base de datos
+  getPdf = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+
+      const auction = await prisma.auction.findUnique({
+        where: { id },
+        select: {
+          pdfData: true,
+          pdfFilename: true,
+        },
+      });
+
+      if (!auction || !auction.pdfData) {
+        return res.status(404).json({
+          success: false,
+          error: { message: 'PDF no encontrado' },
+        });
+      }
+
+      // Configurar headers para PDF
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="${auction.pdfFilename || 'documento.pdf'}"`);
+      
+      // Enviar el PDF
+      res.send(auction.pdfData);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
