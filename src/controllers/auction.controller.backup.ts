@@ -309,8 +309,6 @@ export class AuctionController {
         secondaryImage5,
       };
       let processedPdfUrl = pdfUrl;
-      let processedPdfData: Buffer | undefined;
-      let processedPdfFilename: string | undefined;
 
       if (files && files.length > 0) {
         try {

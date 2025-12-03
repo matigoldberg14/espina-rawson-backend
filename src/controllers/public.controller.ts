@@ -72,10 +72,13 @@ export class PublicController {
       const { page = 1, limit = 50 } = req.query;
       const skip = (Number(page) - 1) * Number(limit);
 
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      
       const where = {
         status: 'PUBLISHED' as const,
         endDate: {
-          gt: new Date(),
+          gt: oneMonthAgo, // Mostrar subastas hasta 1 mes después de vencer
         },
       };
 
@@ -121,9 +124,11 @@ export class PublicController {
         prisma.auction.count({ where }),
       ]);
 
-      // Procesar el campo details en cada subasta
+      // Procesar el campo details y convertir precios Decimal a números
       const processedAuctions = auctions.map(auction => ({
         ...auction,
+        startingPrice: auction.startingPrice ? Number(auction.startingPrice) : 0,
+        currentPrice: auction.currentPrice ? Number(auction.currentPrice) : Number(auction.startingPrice) || 0,
         details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
       }));
 
@@ -249,9 +254,11 @@ export class PublicController {
         });
       }
 
-      // Procesar el campo details para asegurar que sea una cadena
+      // Procesar el campo details y convertir precios Decimal a números
       const processedAuction = {
         ...auction,
+        startingPrice: auction.startingPrice ? Number(auction.startingPrice) : 0,
+        currentPrice: auction.currentPrice ? Number(auction.currentPrice) : Number(auction.startingPrice) || 0,
         details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
       };
 
