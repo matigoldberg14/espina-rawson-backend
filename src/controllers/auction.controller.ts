@@ -757,14 +757,20 @@ export class AuctionController {
         });
       }
 
+      // Asegurar que pdfData sea un Buffer
+      const pdfBuffer = Buffer.isBuffer(auction.pdfData) 
+        ? auction.pdfData 
+        : Buffer.from(auction.pdfData as any);
+      
       // Configurar headers para PDF
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="${auction.pdfFilename || 'documento.pdf'}"`);
+      res.setHeader('Content-Length', pdfBuffer.length.toString());
       
-      console.log(`✅ Enviando PDF: ${auction.pdfFilename} (${(auction.pdfData as Buffer).length} bytes)`);
+      console.log(`✅ Enviando PDF: ${auction.pdfFilename} (${pdfBuffer.length} bytes)`);
       
       // Enviar el PDF
-      res.send(auction.pdfData);
+      res.send(pdfBuffer);
     } catch (error) {
       console.error('❌ Error sirviendo PDF:', error);
       next(error);
