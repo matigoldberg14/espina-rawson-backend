@@ -125,12 +125,23 @@ export class PublicController {
       ]);
 
       // Procesar el campo details y convertir precios Decimal a números
-      const processedAuctions = auctions.map(auction => ({
-        ...auction,
-        startingPrice: auction.startingPrice ? Number(auction.startingPrice) : 0,
-        currentPrice: auction.currentPrice ? Number(auction.currentPrice) : Number(auction.startingPrice) || 0,
-        details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
-      }));
+      const processedAuctions = auctions.map(auction => {
+        const startingPriceNum = auction.startingPrice ? Number(auction.startingPrice) : 0;
+        const currentPriceNum = auction.currentPrice ? Number(auction.currentPrice) : startingPriceNum;
+        
+        console.log(`🔍 DEBUG AUCTION ${auction.id}:`);
+        console.log(`  - startingPrice (raw):`, auction.startingPrice, `type:`, typeof auction.startingPrice);
+        console.log(`  - currentPrice (raw):`, auction.currentPrice, `type:`, typeof auction.currentPrice);
+        console.log(`  - startingPrice (converted):`, startingPriceNum);
+        console.log(`  - currentPrice (converted):`, currentPriceNum);
+        
+        return {
+          ...auction,
+          startingPrice: startingPriceNum,
+          currentPrice: currentPriceNum,
+          details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
+        };
+      });
 
       res.json({
         success: true,
