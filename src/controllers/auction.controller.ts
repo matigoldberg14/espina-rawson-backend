@@ -205,15 +205,22 @@ export class AuctionController {
           }
 
           // Procesar PDF - almacenar en base de datos
+          console.log('🔍 Buscando PDF entre archivos...');
+          console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
           const pdfFile = files.find(
             (file) => file.mimetype === 'application/pdf'
           );
           if (pdfFile) {
-            console.log('📄 Almacenando PDF en base de datos...');
+            console.log('📄 PDF encontrado! Almacenando en base de datos...');
+            console.log(`  - Nombre: ${pdfFile.originalname}`);
+            console.log(`  - Tamaño: ${pdfFile.size} bytes`);
+            console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
             // El PDF se almacenará directamente en la BD
             processedPdfData = pdfFile.buffer;
             processedPdfFilename = pdfFile.originalname;
             console.log('✅ PDF preparado para almacenamiento:', pdfFile.originalname);
+          } else {
+            console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos a ImgBB:', error);
@@ -348,15 +355,22 @@ export class AuctionController {
           }
 
           // Procesar PDF - almacenar en base de datos
+          console.log('🔍 Buscando PDF entre archivos...');
+          console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
           const pdfFile = files.find(
             (file) => file.mimetype === 'application/pdf'
           );
           if (pdfFile) {
-            console.log('📄 Almacenando PDF en base de datos...');
+            console.log('📄 PDF encontrado! Almacenando en base de datos...');
+            console.log(`  - Nombre: ${pdfFile.originalname}`);
+            console.log(`  - Tamaño: ${pdfFile.size} bytes`);
+            console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
             // El PDF se almacenará directamente en la BD
             processedPdfData = pdfFile.buffer;
             processedPdfFilename = pdfFile.originalname;
             console.log('✅ PDF preparado para almacenamiento:', pdfFile.originalname);
+          } else {
+            console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos a ImgBB:', error);
@@ -366,31 +380,41 @@ export class AuctionController {
         }
       }
 
+      // Construir objeto data dinámicamente para solo incluir pdfData si hay un nuevo PDF
+      const updateData: any = {
+        title,
+        description,
+        type,
+        location,
+        currency: currency || 'ARS',
+        startingPrice,
+        endDate: new Date(endDate + 'T23:59:59.999Z'),
+        status,
+        metadata,
+        youtubeUrl,
+        mainImageUrl: processedMainImage,
+        secondaryImage1: processedSecondaryImages.secondaryImage1,
+        secondaryImage2: processedSecondaryImages.secondaryImage2,
+        secondaryImage3: processedSecondaryImages.secondaryImage3,
+        secondaryImage4: processedSecondaryImages.secondaryImage4,
+        secondaryImage5: processedSecondaryImages.secondaryImage5,
+        pdfUrl: processedPdfUrl,
+        auctionLink,
+        details: details || null,
+      };
+
+      // Solo agregar pdfData y pdfFilename si realmente hay un nuevo PDF
+      if (processedPdfData && processedPdfFilename) {
+        console.log('📄 Guardando PDF en base de datos:', processedPdfFilename, 'Tamaño:', processedPdfData.length, 'bytes');
+        updateData.pdfData = processedPdfData;
+        updateData.pdfFilename = processedPdfFilename;
+      } else {
+        console.log('⚠️ No hay nuevo PDF para guardar (manteniendo el existente si existe)');
+      }
+
       const auction = await prisma.auction.update({
         where: { id },
-        data: {
-          title,
-          description,
-          type,
-          location,
-          currency: currency || 'ARS',
-          startingPrice,
-          endDate: new Date(endDate + 'T23:59:59.999Z'),
-          status,
-          metadata,
-          youtubeUrl,
-          mainImageUrl: processedMainImage,
-          secondaryImage1: processedSecondaryImages.secondaryImage1,
-          secondaryImage2: processedSecondaryImages.secondaryImage2,
-          secondaryImage3: processedSecondaryImages.secondaryImage3,
-          secondaryImage4: processedSecondaryImages.secondaryImage4,
-          secondaryImage5: processedSecondaryImages.secondaryImage5,
-          pdfUrl: processedPdfUrl,
-          pdfData: processedPdfData,
-          pdfFilename: processedPdfFilename,
-          auctionLink,
-          details: details || null,
-        },
+        data: updateData,
         include: {
           images: true,
         },
@@ -707,16 +731,26 @@ export class AuctionController {
   getPdf = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
+      console.log(`📄 GET PDF - Buscando PDF para subasta: ${id}`);
 
       const auction = await prisma.auction.findUnique({
         where: { id },
         select: {
           pdfData: true,
           pdfFilename: true,
+          pdfUrl: true,
         },
       });
 
+      console.log(`🔍 PDF encontrado:`, {
+        hasPdfData: !!auction?.pdfData,
+        pdfDataLength: auction?.pdfData ? (auction.pdfData as Buffer).length : 0,
+        pdfFilename: auction?.pdfFilename,
+        pdfUrl: auction?.pdfUrl,
+      });
+
       if (!auction || !auction.pdfData) {
+        console.log(`❌ PDF no encontrado en BD para subasta ${id}`);
         return res.status(404).json({
           success: false,
           error: { message: 'PDF no encontrado' },
@@ -727,9 +761,12 @@ export class AuctionController {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `inline; filename="${auction.pdfFilename || 'documento.pdf'}"`);
       
+      console.log(`✅ Enviando PDF: ${auction.pdfFilename} (${(auction.pdfData as Buffer).length} bytes)`);
+      
       // Enviar el PDF
       res.send(auction.pdfData);
     } catch (error) {
+      console.error('❌ Error sirviendo PDF:', error);
       next(error);
     }
   };
