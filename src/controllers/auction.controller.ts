@@ -3,6 +3,7 @@ import { prisma } from '../index';
 import { ActivityLogService } from '../services/activityLog.service';
 import { cleanupFiles } from '../middleware/upload.middleware';
 import { imgbbService } from '../services/imgbb.service';
+import { cloudinaryService } from '../services/cloudinary.service';
 import path from 'path';
 import fs from 'fs/promises';
 
@@ -168,8 +169,6 @@ export class AuctionController {
         secondaryImage5,
       };
       let processedPdfUrl = pdfUrl;
-      let processedPdfData: Buffer | undefined;
-      let processedPdfFilename: string | undefined;
 
       if (files && files.length > 0) {
         try {
@@ -250,8 +249,6 @@ export class AuctionController {
           secondaryImage4: processedSecondaryImages.secondaryImage4,
           secondaryImage5: processedSecondaryImages.secondaryImage5,
           pdfUrl: processedPdfUrl,
-          pdfData: processedPdfData,
-          pdfFilename: processedPdfFilename,
           auctionLink,
           details: details || null,
         },
@@ -318,8 +315,6 @@ export class AuctionController {
         secondaryImage5,
       };
       let processedPdfUrl = pdfUrl;
-      let processedPdfData: Buffer | undefined;
-      let processedPdfFilename: string | undefined;
 
       if (files && files.length > 0) {
         try {
@@ -354,33 +349,41 @@ export class AuctionController {
             }
           }
 
-          // Procesar PDF - almacenar en base de datos
+          // Procesar PDF - subir a Cloudinary
           console.log('🔍 Buscando PDF entre archivos...');
           console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
           const pdfFile = files.find(
             (file) => file.mimetype === 'application/pdf'
           );
           if (pdfFile) {
-            console.log('📄 PDF encontrado! Almacenando en base de datos...');
+            console.log('📄 PDF encontrado! Subiendo a Cloudinary...');
             console.log(`  - Nombre: ${pdfFile.originalname}`);
             console.log(`  - Tamaño: ${pdfFile.size} bytes`);
             console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
-            // El PDF se almacenará directamente en la BD
-            processedPdfData = pdfFile.buffer;
-            processedPdfFilename = pdfFile.originalname;
-            console.log('✅ PDF preparado para almacenamiento:', pdfFile.originalname);
+            
+            try {
+              // Subir PDF a Cloudinary
+              const cloudinaryUrl = await cloudinaryService.uploadPdf(
+                pdfFile.buffer,
+                pdfFile.originalname
+              );
+              processedPdfUrl = cloudinaryUrl;
+              console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
+            } catch (cloudinaryError) {
+              console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
+              // No lanzar error para permitir continuar, pero mantener pdfUrl existente
+              console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
+            }
           } else {
             console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
-          console.error('❌ Error subiendo archivos a ImgBB:', error);
-          console.warn('⚠️ Continuando sin subir archivos a ImgBB. Verifique que IMGBB_API_KEY esté configurado.');
+          console.error('❌ Error subiendo archivos:', error);
+          console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
           // No lanzar error para permitir que la aplicación continúe funcionando
-          // Los archivos simplemente no se subirán a ImgBB hasta que se configure la API key
         }
       }
 
-      // Construir objeto data dinámicamente para solo incluir pdfData si hay un nuevo PDF
       const updateData: any = {
         title,
         description,
@@ -402,15 +405,6 @@ export class AuctionController {
         auctionLink,
         details: details || null,
       };
-
-      // Solo agregar pdfData y pdfFilename si realmente hay un nuevo PDF
-      if (processedPdfData && processedPdfFilename) {
-        console.log('📄 Guardando PDF en base de datos:', processedPdfFilename, 'Tamaño:', processedPdfData.length, 'bytes');
-        updateData.pdfData = processedPdfData;
-        updateData.pdfFilename = processedPdfFilename;
-      } else {
-        console.log('⚠️ No hay nuevo PDF para guardar (manteniendo el existente si existe)');
-      }
 
       const auction = await prisma.auction.update({
         where: { id },
@@ -727,7 +721,7 @@ export class AuctionController {
     }
   };
 
-  // Servir PDF desde base de datos
+  // Servir PDF - redirige a Cloudinary si está disponible, sino intenta desde BD (compatibilidad)
   getPdf = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
@@ -742,35 +736,40 @@ export class AuctionController {
         },
       });
 
-      console.log(`🔍 PDF encontrado:`, {
-        hasPdfData: !!auction?.pdfData,
-        pdfDataLength: auction?.pdfData ? (auction.pdfData as Buffer).length : 0,
-        pdfFilename: auction?.pdfFilename,
-        pdfUrl: auction?.pdfUrl,
-      });
-
-      if (!auction || !auction.pdfData) {
-        console.log(`❌ PDF no encontrado en BD para subasta ${id}`);
+      if (!auction) {
+        console.log(`❌ Subasta no encontrada: ${id}`);
         return res.status(404).json({
           success: false,
-          error: { message: 'PDF no encontrado' },
+          error: { message: 'Subasta no encontrada' },
         });
       }
 
-      // Asegurar que pdfData sea un Buffer
-      const pdfBuffer = Buffer.isBuffer(auction.pdfData) 
-        ? auction.pdfData 
-        : Buffer.from(auction.pdfData as any);
-      
-      // Configurar headers para PDF
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `inline; filename="${auction.pdfFilename || 'documento.pdf'}"`);
-      res.setHeader('Content-Length', pdfBuffer.length.toString());
-      
-      console.log(`✅ Enviando PDF: ${auction.pdfFilename} (${pdfBuffer.length} bytes)`);
-      
-      // Enviar el PDF
-      res.send(pdfBuffer);
+      // Prioridad 1: Si hay URL de Cloudinary, redirigir
+      if (auction.pdfUrl && auction.pdfUrl.includes('cloudinary.com')) {
+        console.log(`✅ Redirigiendo a Cloudinary: ${auction.pdfUrl}`);
+        return res.redirect(auction.pdfUrl);
+      }
+
+      // Prioridad 2: Si hay PDF en BD (compatibilidad con datos antiguos)
+      if (auction.pdfData) {
+        console.log(`📄 Sirviendo PDF desde BD (compatibilidad)`);
+        const pdfBuffer = Buffer.isBuffer(auction.pdfData) 
+          ? auction.pdfData 
+          : Buffer.from(auction.pdfData as any);
+        
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${auction.pdfFilename || 'documento.pdf'}"`);
+        res.setHeader('Content-Length', pdfBuffer.length.toString());
+        
+        return res.send(pdfBuffer);
+      }
+
+      // No hay PDF disponible
+      console.log(`❌ PDF no disponible para subasta ${id}`);
+      return res.status(404).json({
+        success: false,
+        error: { message: 'PDF no encontrado' },
+      });
     } catch (error) {
       console.error('❌ Error sirviendo PDF:', error);
       next(error);
