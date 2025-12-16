@@ -203,29 +203,38 @@ export class AuctionController {
             }
           }
 
-          // Procesar PDF - almacenar en base de datos
+          // Procesar PDF - subir a Cloudinary
           console.log('🔍 Buscando PDF entre archivos...');
           console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
           const pdfFile = files.find(
             (file) => file.mimetype === 'application/pdf'
           );
           if (pdfFile) {
-            console.log('📄 PDF encontrado! Almacenando en base de datos...');
+            console.log('📄 PDF encontrado! Subiendo a Cloudinary...');
             console.log(`  - Nombre: ${pdfFile.originalname}`);
             console.log(`  - Tamaño: ${pdfFile.size} bytes`);
             console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
-            // El PDF se almacenará directamente en la BD
-            processedPdfData = pdfFile.buffer;
-            processedPdfFilename = pdfFile.originalname;
-            console.log('✅ PDF preparado para almacenamiento:', pdfFile.originalname);
+            
+            try {
+              // Subir PDF a Cloudinary
+              const cloudinaryUrl = await cloudinaryService.uploadPdf(
+                pdfFile.buffer,
+                pdfFile.originalname
+              );
+              processedPdfUrl = cloudinaryUrl;
+              console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
+            } catch (cloudinaryError) {
+              console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
+              // No lanzar error para permitir continuar, pero mantener pdfUrl existente
+              console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
+            }
           } else {
             console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
-          console.error('❌ Error subiendo archivos a ImgBB:', error);
-          console.warn('⚠️ Continuando sin subir archivos a ImgBB. Verifique que IMGBB_API_KEY esté configurado.');
+          console.error('❌ Error subiendo archivos:', error);
+          console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
           // No lanzar error para permitir que la aplicación continúe funcionando
-          // Los archivos simplemente no se subirán a ImgBB hasta que se configure la API key
         }
       }
 
