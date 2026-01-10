@@ -22,10 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { FileUpload } from '../components/ui/file-upload';
+import { FileUpload } from '../components/FileUpload';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Plus, Trash2, X, Image, Video } from 'lucide-react';
-import RichTextEditor from '../components/RichTextEditor';
+import { RichTextEditor } from '../components/RichTextEditor';
 
 const schema = yup.object({
   lotNumber: yup.number().required('El número de lote es obligatorio').min(1),
@@ -385,7 +385,7 @@ export default function LotFormPage() {
           <CardContent>
             <RichTextEditor
               value={watch('details') || ''}
-              onChange={(value) => setValue('details', value)}
+              onChange={(value: string) => setValue('details', value)}
               placeholder="Detalles técnicos del vehículo..."
             />
           </CardContent>

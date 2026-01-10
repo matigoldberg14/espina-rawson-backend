@@ -188,7 +188,7 @@ export default function LotsPage() {
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">Base</p>
                       <p className="font-bold text-lg">
-                        {formatCurrency(lot.startingPrice, lot.currency)}
+                        {formatCurrency(lot.startingPrice)}
                       </p>
                     </div>
                   </div>
