@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../components/ui/select';
-import { FileUpload } from '../components/FileUpload';
+import FileUpload from '../components/FileUpload';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Plus, Trash2, X, Image, Video } from 'lucide-react';
 import { RichTextEditor } from '../components/RichTextEditor';
@@ -216,13 +216,15 @@ export default function LotFormPage() {
     }
   };
 
-  const handleFilesChange = (files: File[]) => {
-    const totalImages = existingImages.length + newFiles.length + files.length;
+  const handleFilesChange = (files: FileList | null) => {
+    if (!files) return;
+    const filesArray = Array.from(files);
+    const totalImages = existingImages.length + newFiles.length + filesArray.length;
     if (totalImages > 15) {
       toast.error('Máximo 15 imágenes por lote');
       return;
     }
-    setNewFiles(prev => [...prev, ...files]);
+    setNewFiles(prev => [...prev, ...filesArray]);
   };
 
   const removeExistingImage = (imageId: string) => {
@@ -384,6 +386,7 @@ export default function LotFormPage() {
           </CardHeader>
           <CardContent>
             <RichTextEditor
+              label="Detalles técnicos"
               value={watch('details') || ''}
               onChange={(value: string) => setValue('details', value)}
               placeholder="Detalles técnicos del vehículo..."
@@ -458,11 +461,12 @@ export default function LotFormPage() {
             {/* Subir nuevas imágenes */}
             {totalImages < 15 && (
               <FileUpload
+                label="Subir imágenes"
                 accept="image/*"
                 multiple
                 maxFiles={15 - totalImages}
                 onFilesChange={handleFilesChange}
-                helperText={`Podés subir hasta ${15 - totalImages} imágenes más`}
+                description={`Podés subir hasta ${15 - totalImages} imágenes más`}
               />
             )}
           </CardContent>
