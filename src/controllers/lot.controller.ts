@@ -179,7 +179,6 @@ export class LotController {
         entity: 'lot',
         entityId: lot.id,
         details: { title: lot.title, lotNumber: lot.lotNumber, auctionId },
-        req,
       });
 
       res.status(201).json({
@@ -320,7 +319,6 @@ export class LotController {
         entity: 'lot',
         entityId: lot.id,
         details: { title: lot.title, lotNumber: lot.lotNumber },
-        req,
       });
 
       res.json({
@@ -359,7 +357,6 @@ export class LotController {
         entity: 'lot',
         entityId: id,
         details: { title: lot.title, lotNumber: lot.lotNumber },
-        req,
       });
 
       res.json({
