@@ -11,7 +11,7 @@ import {
 } from '../components/ui/card';
 import { formatCurrency, formatDateTime } from '../lib/utils';
 import toast from 'react-hot-toast';
-import { Plus, Edit, Trash2, Star, StarOff, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit, Trash2, Star, StarOff, Eye, EyeOff, Package } from 'lucide-react';
 
 interface Auction {
   id: string;
@@ -196,7 +196,12 @@ export default function AuctionsPage() {
                       <EyeOff className="h-4 w-4" />
                     )}
                   </Button>
-                  <Button variant="ghost" size="icon" asChild>
+                  <Button variant="ghost" size="icon" asChild title="Gestionar Lotes">
+                    <Link to={`/auctions/${auction.id}/lots`}>
+                      <Package className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" size="icon" asChild title="Editar">
                     <Link to={`/auctions/${auction.id}/edit`}>
                       <Edit className="h-4 w-4" />
                     </Link>
@@ -205,6 +210,7 @@ export default function AuctionsPage() {
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(auction.id)}
+                    title="Eliminar"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

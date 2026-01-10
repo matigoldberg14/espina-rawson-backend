@@ -44,4 +44,20 @@ router.get(
   auctionController.getPdf
 );
 
+// Obtener lotes de una subasta (público)
+router.get(
+  '/auctions/:auctionId/lots',
+  param('auctionId').isString().notEmpty(),
+  validate,
+  publicController.getLotsByAuction
+);
+
+// Obtener detalle de un lote (público)
+router.get(
+  '/lots/:id',
+  param('id').isString().notEmpty(),
+  validate,
+  publicController.getLotDetail
+);
+
 export default router;

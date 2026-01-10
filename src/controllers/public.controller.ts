@@ -346,4 +346,140 @@ export class PublicController {
       next(error);
     }
   };
+
+  // Obtener lotes de una subasta (público)
+  getLotsByAuction = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { auctionId } = req.params;
+
+      const lots = await prisma.lot.findMany({
+        where: { 
+          auctionId,
+          isActive: true,
+        },
+        select: {
+          id: true,
+          lotNumber: true,
+          title: true,
+          description: true,
+          currency: true,
+          startingPrice: true,
+          currentPrice: true,
+          details: true,
+          images: {
+            select: {
+              id: true,
+              url: true,
+              isPrimary: true,
+              order: true,
+            },
+            orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
+          },
+          videos: {
+            select: {
+              id: true,
+              url: true,
+              title: true,
+              order: true,
+            },
+            orderBy: { order: 'asc' },
+          },
+        },
+        orderBy: [{ lotNumber: 'asc' }, { order: 'asc' }],
+      });
+
+      // Procesar los precios Decimal a números
+      const processedLots = lots.map(lot => ({
+        ...lot,
+        startingPrice: lot.startingPrice ? Number(lot.startingPrice) : 0,
+        currentPrice: lot.currentPrice ? Number(lot.currentPrice) : Number(lot.startingPrice) || 0,
+        details: lot.details ? (typeof lot.details === 'string' ? lot.details : JSON.stringify(lot.details)) : null,
+      }));
+
+      res.json({
+        success: true,
+        data: processedLots,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // Obtener detalle de un lote (público)
+  getLotDetail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const lot = await prisma.lot.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          lotNumber: true,
+          title: true,
+          description: true,
+          currency: true,
+          startingPrice: true,
+          currentPrice: true,
+          details: true,
+          auction: {
+            select: {
+              id: true,
+              title: true,
+              endDate: true,
+              status: true,
+              auctionLink: true,
+            },
+          },
+          images: {
+            select: {
+              id: true,
+              url: true,
+              isPrimary: true,
+              order: true,
+            },
+            orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
+          },
+          videos: {
+            select: {
+              id: true,
+              url: true,
+              title: true,
+              order: true,
+            },
+            orderBy: { order: 'asc' },
+          },
+        },
+      });
+
+      if (!lot) {
+        return res.status(404).json({
+          success: false,
+          error: { message: 'Lote no encontrado' },
+        });
+      }
+
+      // Procesar los precios Decimal a números
+      const processedLot = {
+        ...lot,
+        startingPrice: lot.startingPrice ? Number(lot.startingPrice) : 0,
+        currentPrice: lot.currentPrice ? Number(lot.currentPrice) : Number(lot.startingPrice) || 0,
+        details: lot.details ? (typeof lot.details === 'string' ? lot.details : JSON.stringify(lot.details)) : null,
+      };
+
+      res.json({
+        success: true,
+        data: processedLot,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

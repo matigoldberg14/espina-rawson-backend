@@ -231,3 +231,41 @@ export const informationService = {
 
   getTags: () => api.get('/information/tags'),
 };
+
+// Servicio de Lotes
+export const lotService = {
+  getByAuction: (auctionId: string) => api.get(`/lots/auction/${auctionId}`),
+
+  getById: (id: string) => api.get(`/lots/${id}`),
+
+  create: (data: FormData) =>
+    api.post('/lots', data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
+  update: (id: string, data: FormData) =>
+    api.put(`/lots/${id}`, data, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
+  delete: (id: string) => api.delete(`/lots/${id}`),
+
+  addImages: (id: string, files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('images', file);
+    });
+    return api.post(`/lots/${id}/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  deleteImage: (lotId: string, imageId: string) =>
+    api.delete(`/lots/${lotId}/images/${imageId}`),
+
+  addVideo: (lotId: string, url: string, title?: string) =>
+    api.post(`/lots/${lotId}/videos`, { url, title }),
+
+  deleteVideo: (lotId: string, videoId: string) =>
+    api.delete(`/lots/${lotId}/videos/${videoId}`),
+};

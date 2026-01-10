@@ -23,6 +23,8 @@ import SettingsPage from './pages/SettingsPage';
 import UsersPage from './pages/UsersPage';
 import NewsletterPage from './pages/NewsletterPage';
 import InformationPage from './pages/InformationPage';
+import LotsPage from './pages/LotsPage';
+import LotFormPage from './pages/LotFormPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +56,18 @@ function App() {
                 <Route
                   path="/auctions/:id/edit"
                   element={<AuctionFormPage />}
+                />
+                <Route
+                  path="/auctions/:auctionId/lots"
+                  element={<LotsPage />}
+                />
+                <Route
+                  path="/auctions/:auctionId/lots/new"
+                  element={<LotFormPage />}
+                />
+                <Route
+                  path="/auctions/:auctionId/lots/:lotId/edit"
+                  element={<LotFormPage />}
                 />
                 <Route path="/practice-areas" element={<PracticeAreasPage />} />
                 <Route path="/team-members" element={<TeamMembersPage />} />

@@ -74,6 +74,7 @@ model Auction {
   details         Json?           // Detalles técnicos de la subasta
   images          AuctionImage[]
   bids            Bid[]
+  lots            Lot[]           // Lotes de la subasta
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   metadata        Json?           // Para datos adicionales flexibles
@@ -91,6 +92,59 @@ model AuctionImage {
   isPrimary  Boolean  @default(false)
   order      Int      @default(0)
   createdAt  DateTime @default(now())
+}
+
+// Modelo para lotes dentro de una subasta
+model Lot {
+  id            String      @id @default(cuid())
+  auctionId     String
+  auction       Auction     @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  lotNumber     Int         // Número de lote (1, 2, 3, etc.)
+  title         String      // Título del lote (ej: "Renault Kwid 2020")
+  description   String?     @db.Text
+  currency      String?     @default("ARS") @db.VarChar(3)
+  startingPrice Decimal     @db.Decimal(12, 2)
+  currentPrice  Decimal?    @db.Decimal(12, 2)
+  details       Json?       // Detalles técnicos del lote
+  order         Int         @default(0)
+  isActive      Boolean     @default(true)
+  images        LotImage[]
+  videos        LotVideo[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([auctionId, lotNumber])
+  @@index([auctionId])
+  @@map("lots")
+}
+
+// Modelo para imágenes de lotes (hasta 15 por lote)
+model LotImage {
+  id        String   @id @default(cuid())
+  lotId     String
+  lot       Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  url       String
+  filename  String?
+  isPrimary Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([lotId])
+  @@map("lot_images")
+}
+
+// Modelo para videos de lotes (YouTube)
+model LotVideo {
+  id        String   @id @default(cuid())
+  lotId     String
+  lot       Lot      @relation(fields: [lotId], references: [id], onDelete: Cascade)
+  url       String   // URL de YouTube
+  title     String?  // Título opcional del video
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([lotId])
+  @@map("lot_videos")
 }
 
 // Modelo para pujas (opcional, para futuro)
