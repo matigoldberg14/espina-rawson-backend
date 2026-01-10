@@ -77,6 +77,10 @@ export class LotController {
   // Crear un nuevo lote
   createLot = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('📦 Creando lote...');
+      console.log('📦 Body:', JSON.stringify(req.body, null, 2));
+      console.log('📦 Files:', req.files ? (req.files as Express.Multer.File[]).length : 0);
+      
       const {
         auctionId,
         lotNumber,
@@ -185,9 +189,14 @@ export class LotController {
         success: true,
         data: lot,
       });
-    } catch (error) {
-      console.error('Error creating lot:', error);
-      next(error);
+    } catch (error: any) {
+      console.error('❌ Error creating lot:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
+      res.status(500).json({
+        success: false,
+        error: { message: error.message || 'Error al crear el lote' },
+      });
     }
   };
 
