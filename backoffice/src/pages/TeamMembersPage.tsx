@@ -13,6 +13,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
 import { Label } from '../components/ui/label';
+import ImageUpload from '../components/ImageUpload';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Dialog,
@@ -409,30 +410,24 @@ const TeamMembersPage: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="image">URL de la Imagen *</Label>
-                <Input
-                  id="image"
-                  value={formData.image}
-                  onChange={(e) =>
-                    setFormData({ ...formData, image: e.target.value })
-                  }
-                  placeholder="https://example.com/photo.jpg"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="linkedin">URL de LinkedIn</Label>
-                <Input
-                  id="linkedin"
-                  value={formData.linkedin}
-                  onChange={(e) =>
-                    setFormData({ ...formData, linkedin: e.target.value })
-                  }
-                  placeholder="https://linkedin.com/in/username"
-                />
-              </div>
+            <ImageUpload
+              label="Foto del Miembro"
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              required
+              description="Foto del miembro del equipo (se sube automáticamente a ImgBB)"
+            />
+
+            <div>
+              <Label htmlFor="linkedin">URL de LinkedIn</Label>
+              <Input
+                id="linkedin"
+                value={formData.linkedin}
+                onChange={(e) =>
+                  setFormData({ ...formData, linkedin: e.target.value })
+                }
+                placeholder="https://linkedin.com/in/username"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">

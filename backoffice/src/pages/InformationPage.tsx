@@ -3,6 +3,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
+import ImageUpload from '../components/ImageUpload';
 import {
   Select,
   SelectContent,
@@ -343,14 +344,13 @@ const InformationPage: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <Label htmlFor="thumbnail">Imagen Miniatura</Label>
-                  <Input
-                    id="thumbnail"
+                  <ImageUpload
+                    label="Imagen Miniatura"
                     value={formData.thumbnail}
-                    onChange={(e) =>
-                      setFormData({ ...formData, thumbnail: e.target.value })
+                    onChange={(url) =>
+                      setFormData({ ...formData, thumbnail: url })
                     }
-                    placeholder="https://example.com/thumbnail.jpg"
+                    description="Miniatura del contenido (se sube a ImgBB)"
                   />
                 </div>
               </div>

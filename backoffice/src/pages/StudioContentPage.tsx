@@ -14,6 +14,7 @@ import { Input } from '../components/ui/input';
 import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
 import { Label } from '../components/ui/label';
+import ImageUpload from '../components/ImageUpload';
 import { Card, CardContent } from '../components/ui/card';
 import {
   Dialog,
@@ -531,29 +532,12 @@ const StudioContentPage: React.FC = () => {
               />
             </div>
 
-            <div>
-              <Label htmlFor="image">URL de la Imagen</Label>
-              <Input
-                id="image"
-                value={formData.image}
-                onChange={(e) =>
-                  setFormData({ ...formData, image: e.target.value })
-                }
-                placeholder="https://example.com/image.jpg"
-              />
-              {formData.image && (
-                <div className="mt-2">
-                  <img
-                    src={formData.image}
-                    alt="Vista previa"
-                    className="h-32 w-48 object-cover rounded border"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-            </div>
+            <ImageUpload
+              label="Imagen"
+              value={formData.image}
+              onChange={(url) => setFormData({ ...formData, image: url })}
+              description="Imagen del contenido (se sube automáticamente a ImgBB)"
+            />
 
             <div className="flex items-center space-x-2">
               <Switch
