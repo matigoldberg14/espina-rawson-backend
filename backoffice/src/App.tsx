@@ -25,6 +25,7 @@ import NewsletterPage from './pages/NewsletterPage';
 import InformationPage from './pages/InformationPage';
 import LotsPage from './pages/LotsPage';
 import LotFormPage from './pages/LotFormPage';
+import ClientsPage from './pages/ClientsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +77,7 @@ function App() {
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/newsletter" element={<NewsletterPage />} />
                 <Route path="/information" element={<InformationPage />} />
+                <Route path="/clients" element={<ClientsPage />} />
               </Route>
             </Route>
           </Routes>

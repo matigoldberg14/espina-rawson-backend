@@ -244,6 +244,14 @@ export const uploadService = {
   },
 };
 
+// Servicio de Clientes (logos "Confían en Nosotros")
+export const clientService = {
+  getAll: () => api.get('/clients/admin'),
+  create: (data: any) => api.post('/clients', data),
+  update: (id: string, data: any) => api.put(`/clients/${id}`, data),
+  delete: (id: string) => api.delete(`/clients/${id}`),
+};
+
 // Servicio de Lotes
 export const lotService = {
   getByAuction: (auctionId: string) => api.get(`/lots/auction/${auctionId}`),

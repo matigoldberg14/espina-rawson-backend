@@ -249,6 +249,20 @@ model StudioContent {
   @@map("studio_content")
 }
 
+// Modelo para logos de clientes ("Confían en Nosotros")
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String   // URL del logo (almacenado en ImgBB)
+  website   String?  // URL del sitio web del cliente
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("clients")
+}
+
 // Modelo para contenido informativo
 model Information {
   id          String   @id @default(cuid())

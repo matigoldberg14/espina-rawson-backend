@@ -13,6 +13,7 @@ import {
   X,
   Mail,
   Info,
+  Building2,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useState } from 'react';
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Áreas de Práctica', href: '/practice-areas', icon: Briefcase },
   { name: 'Equipo del Estudio', href: '/team-members', icon: Users },
   { name: 'Contenido del Estudio', href: '/studio-content', icon: FileText },
+  { name: 'Clientes (Logos)', href: '/clients', icon: Building2 },
   { name: 'Configuración', href: '/settings', icon: Settings },
   { name: 'Usuarios', href: '/users', icon: Users },
 ];

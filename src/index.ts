@@ -26,6 +26,7 @@ import publicRoutes from './routes/public.routes';
 import newsletterRoutes from './routes/newsletter.routes';
 import lotRoutes from './routes/lot.routes';
 import uploadRoutes from './routes/upload.routes';
+import clientRoutes from './routes/client.routes';
 
 // Importar controlador para prueba directa
 import { SettingsController } from './controllers/settings.controller';
@@ -158,6 +159,7 @@ app.use('/api/studio-content', studioContentRoutes);
 app.use('/api/information', informationRoutes);
 app.use('/api/lots', lotRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/clients', clientRoutes);
 
 // Rutas públicas (para el frontend)
 app.use('/api/public', publicRoutes);
