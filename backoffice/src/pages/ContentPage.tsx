@@ -12,6 +12,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import toast from 'react-hot-toast';
 import { Edit2, Save, X } from 'lucide-react';
+import ImageUpload from '../components/ImageUpload';
 
 interface Content {
   id: string;
@@ -127,17 +128,34 @@ export default function ContentPage() {
 
                     {editingId === content.id ? (
                       <div className="space-y-2">
-                        <Label htmlFor={`value-${content.id}`}>Valor</Label>
-                        <textarea
-                          id={`value-${content.id}`}
-                          className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                          value={editedContent?.value || ''}
-                          onChange={(e) =>
-                            setEditedContent((prev) =>
-                              prev ? { ...prev, value: e.target.value } : null
-                            )
-                          }
-                        />
+                        {content.key.includes('_image') ? (
+                          <>
+                            <ImageUpload
+                              label="Imagen"
+                              value={editedContent?.value || ''}
+                              onChange={(url) =>
+                                setEditedContent((prev) =>
+                                  prev ? { ...prev, value: url } : null
+                                )
+                              }
+                              description="Sube una imagen (se almacena en ImgBB)"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <Label htmlFor={`value-${content.id}`}>Valor</Label>
+                            <textarea
+                              id={`value-${content.id}`}
+                              className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+                              value={editedContent?.value || ''}
+                              onChange={(e) =>
+                                setEditedContent((prev) =>
+                                  prev ? { ...prev, value: e.target.value } : null
+                                )
+                              }
+                            />
+                          </>
+                        )}
                         <div className="flex gap-2">
                           <Button
                             size="sm"
@@ -159,9 +177,19 @@ export default function ContentPage() {
                         </div>
                       </div>
                     ) : (
-                      <p className="text-sm whitespace-pre-wrap">
-                        {content.value}
-                      </p>
+                      <>
+                        {content.key.includes('_image') && content.value ? (
+                          <img
+                            src={content.value}
+                            alt="Preview"
+                            className="h-32 w-48 object-cover rounded border"
+                          />
+                        ) : (
+                          <p className="text-sm whitespace-pre-wrap">
+                            {content.value || <span className="text-muted-foreground italic">Sin valor</span>}
+                          </p>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
