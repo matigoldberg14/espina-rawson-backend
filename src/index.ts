@@ -67,9 +67,29 @@ app.use(
 // Servir archivos estáticos desde public
 app.use(express.static(path.join(__dirname, '../public')));
 
+// CORS: permitir múltiples orígenes (dominio principal + Vercel + localhost)
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL_ALT,
+  'http://localhost:3000',
+  'http://localhost:4321',
+].filter(Boolean) as string[];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:4321',
+    origin: (origin, callback) => {
+      // Permitir requests sin origin (ej: curl, Postman, server-side)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.some(allowed => origin === allowed)) {
+        return callback(null, true);
+      }
+      // También permitir subdominios de vercel.app del proyecto
+      if (origin.includes('diseno-espina-rawson') && origin.includes('vercel.app')) {
+        return callback(null, true);
+      }
+      console.warn(`⚠️ CORS bloqueó origin: ${origin}`);
+      return callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -197,7 +217,7 @@ async function startServer() {
     app.listen(port, HOST, () => {
       console.log(`🚀 Servidor corriendo en http://${HOST}:${port}`);
       console.log(`📝 Ambiente: ${process.env.NODE_ENV}`);
-      console.log(`🔒 CORS habilitado para: ${process.env.FRONTEND_URL}`);
+      console.log(`🔒 CORS habilitado para: ${allowedOrigins.join(', ')}`);
     });
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);
