@@ -61,6 +61,18 @@ const limiter = rateLimit({
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        // Permitir imágenes de ImgBB, Cloudinary, y cualquier origen https
+        imgSrc: ["'self'", "data:", "blob:", "https://i.ibb.co", "https://ibb.co", "https://res.cloudinary.com", "https:"],
+        connectSrc: ["'self'", "https:"],
+        frameSrc: ["'self'", "https://www.youtube.com"],
+      },
+    },
   })
 );
 
