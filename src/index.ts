@@ -83,12 +83,15 @@ app.use(express.static(path.join(__dirname, '../public')));
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.FRONTEND_URL_ALT,
+  'https://www.espinarawsonyasoc.com.ar',
+  'https://espinarawsonyasoc.com.ar',
   'http://localhost:3000',
   'http://localhost:4321',
 ].filter(Boolean) as string[];
 
 app.use(
   cors({
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cache-Control', 'Pragma', 'X-Requested-With'],
     origin: (origin, callback) => {
       // Permitir requests sin origin (ej: curl, Postman, server-side)
       if (!origin) return callback(null, true);
