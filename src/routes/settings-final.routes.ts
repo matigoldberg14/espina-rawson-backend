@@ -35,7 +35,7 @@ router.get('/:key', settingsController.getSettingByKey);
 
 // COPIAR ESTRUCTURA DE CONTENT - SIN validar 'key' en body
 const settingsValidation = [
-  body('value').notEmpty().withMessage('El valor es requerido'),
+  body('value').isString().withMessage('El valor debe ser texto'),
   body('description').optional().isString().trim(),
 ];
 

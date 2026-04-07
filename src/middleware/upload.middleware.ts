@@ -97,7 +97,7 @@ export const uploadMultipleImages = multer({
   fileFilter: combinedFilter,
   limits: {
     fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760'),
-    files: 15, // Máximo 15 archivos para lotes
+    files: 22, // Máximo 22 archivos (1 principal + 20 secundarias + 1 PDF)
   },
 });
 

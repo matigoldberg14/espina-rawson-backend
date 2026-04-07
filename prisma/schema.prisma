@@ -56,7 +56,9 @@ model Auction {
   currency        String?         @default("ARS") @db.VarChar(3) // ARS o USD
   startingPrice   Decimal         @db.Decimal(10, 2)
   currentPrice    Decimal?        @db.Decimal(10, 2)
+  startDate       DateTime?
   endDate         DateTime
+  closingTime     String?         @db.VarChar(10)
   isFeatured      Boolean         @default(false) // Para las 3 principales
   status          AuctionStatus   @default(DRAFT)
   order           Int             @default(0) // Para ordenar las destacadas

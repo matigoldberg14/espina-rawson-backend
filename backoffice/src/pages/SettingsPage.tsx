@@ -153,10 +153,20 @@ export default function SettingsPage() {
                           </div>
                         ))}
                       </div>
+                    ) : setting.key === 'auction_terms_conditions' ? (
+                      <textarea
+                        id={setting.key}
+                        className="w-full min-h-[200px] rounded-md border border-input bg-transparent px-3 py-2 text-sm resize-y"
+                        value={editedSettings[setting.key] ?? (typeof setting.value === 'string' ? setting.value : JSON.stringify(setting.value))}
+                        onChange={(e) =>
+                          handleChange(setting.key, e.target.value)
+                        }
+                        placeholder="Escriba aquí los términos y condiciones de las subastas..."
+                      />
                     ) : (
                       <Input
                         id={setting.key}
-                        value={editedSettings[setting.key] ?? setting.value}
+                        value={editedSettings[setting.key] ?? (typeof setting.value === 'string' ? setting.value : JSON.stringify(setting.value))}
                         onChange={(e) =>
                           handleChange(setting.key, e.target.value)
                         }

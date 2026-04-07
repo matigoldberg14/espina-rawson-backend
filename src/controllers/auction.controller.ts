@@ -138,7 +138,9 @@ export class AuctionController {
         location,
         currency,
         startingPrice,
+        startDate,
         endDate,
+        closingTime,
         status,
         metadata,
         youtubeUrl,
@@ -188,18 +190,18 @@ export class AuctionController {
             processedMainImage = mainImageUrl;
             console.log('✅ Imagen principal subida:', mainImageUrl);
 
-            // Subir imágenes secundarias (hasta 5)
-            const secondaryImages = imageFiles.slice(1, 6);
-            for (let i = 0; i < secondaryImages.length; i++) {
+            // Subir imágenes secundarias (2-5 en campos legacy, 6-20 en AuctionImage)
+            const secondaryImages = imageFiles.slice(1, 21);
+            for (let i = 0; i < Math.min(secondaryImages.length, 5); i++) {
               const file = secondaryImages[i];
               const fieldName = `secondaryImage${i + 1}`;
-              
-              const imageUrl = await imgbbService.uploadImage(
-                file.buffer,
-                file.originalname
-              );
+              const imageUrl = await imgbbService.uploadImage(file.buffer, file.originalname);
               processedSecondaryImages[fieldName] = imageUrl;
               console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
+            }
+            // Imágenes 6-20 se guardan en AuctionImage después de crear la subasta
+            if (secondaryImages.length > 5) {
+              (req as any)._extraImages = secondaryImages.slice(5);
             }
           }
 
@@ -216,7 +218,6 @@ export class AuctionController {
             console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
             
             try {
-              // Subir PDF a Cloudinary
               const cloudinaryUrl = await cloudinaryService.uploadPdf(
                 pdfFile.buffer,
                 pdfFile.originalname
@@ -225,7 +226,6 @@ export class AuctionController {
               console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
             } catch (cloudinaryError) {
               console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
-              // No lanzar error para permitir continuar, pero mantener pdfUrl existente
               console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
             }
           } else {
@@ -234,7 +234,6 @@ export class AuctionController {
         } catch (error) {
           console.error('❌ Error subiendo archivos:', error);
           console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
-          // No lanzar error para permitir que la aplicación continúe funcionando
         }
       }
 
@@ -247,7 +246,9 @@ export class AuctionController {
           currency: currency || 'ARS',
           startingPrice,
           currentPrice: startingPrice,
+          startDate: startDate ? new Date(startDate + 'T00:00:00.000Z') : null,
           endDate: new Date(endDate + 'T23:59:59.999Z'),
+          closingTime: closingTime || null,
           status: status || 'DRAFT',
           metadata,
           youtubeUrl,
@@ -262,6 +263,28 @@ export class AuctionController {
           details: details || null,
         },
       });
+
+      // Guardar imágenes extra (6-20) en AuctionImage
+      const extraImages = (req as any)._extraImages as Express.Multer.File[] | undefined;
+      if (extraImages && extraImages.length > 0) {
+        for (let i = 0; i < extraImages.length; i++) {
+          try {
+            const imageUrl = await imgbbService.uploadImage(extraImages[i].buffer, extraImages[i].originalname);
+            await prisma.auctionImage.create({
+              data: {
+                auctionId: auction.id,
+                url: imageUrl,
+                filename: extraImages[i].originalname,
+                isPrimary: false,
+                order: 5 + i,
+              },
+            });
+            console.log(`✅ Imagen extra ${i + 6} guardada en AuctionImage`);
+          } catch (err) {
+            console.error(`❌ Error subiendo imagen extra ${i + 6}:`, err);
+          }
+        }
+      }
 
       // Registrar actividad
       await this.activityLog.log({
@@ -293,7 +316,9 @@ export class AuctionController {
         location,
         currency,
         startingPrice,
+        startDate,
         endDate,
+        closingTime,
         status,
         metadata,
         youtubeUrl,
@@ -343,18 +368,17 @@ export class AuctionController {
             processedMainImage = mainImageUrl;
             console.log('✅ Imagen principal subida:', mainImageUrl);
 
-            // Subir imágenes secundarias (hasta 5)
-            const secondaryImages = imageFiles.slice(1, 6);
-            for (let i = 0; i < secondaryImages.length; i++) {
+            // Subir imágenes secundarias (2-5 en campos legacy, 6-20 en AuctionImage)
+            const secondaryImages = imageFiles.slice(1, 21);
+            for (let i = 0; i < Math.min(secondaryImages.length, 5); i++) {
               const file = secondaryImages[i];
               const fieldName = `secondaryImage${i + 1}`;
-              
-              const imageUrl = await imgbbService.uploadImage(
-                file.buffer,
-                file.originalname
-              );
+              const imageUrl = await imgbbService.uploadImage(file.buffer, file.originalname);
               processedSecondaryImages[fieldName] = imageUrl;
               console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
+            }
+            if (secondaryImages.length > 5) {
+              (req as any)._extraImages = secondaryImages.slice(5);
             }
           }
 
@@ -371,7 +395,6 @@ export class AuctionController {
             console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
             
             try {
-              // Subir PDF a Cloudinary
               const cloudinaryUrl = await cloudinaryService.uploadPdf(
                 pdfFile.buffer,
                 pdfFile.originalname
@@ -380,7 +403,6 @@ export class AuctionController {
               console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
             } catch (cloudinaryError) {
               console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
-              // No lanzar error para permitir continuar, pero mantener pdfUrl existente
               console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
             }
           } else {
@@ -389,7 +411,6 @@ export class AuctionController {
         } catch (error) {
           console.error('❌ Error subiendo archivos:', error);
           console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
-          // No lanzar error para permitir que la aplicación continúe funcionando
         }
       }
 
@@ -400,7 +421,9 @@ export class AuctionController {
         location,
         currency: currency || 'ARS',
         startingPrice,
+        startDate: startDate ? new Date(startDate + 'T00:00:00.000Z') : null,
         endDate: new Date(endDate + 'T23:59:59.999Z'),
+        closingTime: closingTime || null,
         status,
         metadata,
         youtubeUrl,
@@ -422,6 +445,29 @@ export class AuctionController {
           images: true,
         },
       });
+
+      // Guardar imágenes extra (6-20) en AuctionImage
+      const extraImagesUpdate = (req as any)._extraImages as Express.Multer.File[] | undefined;
+      if (extraImagesUpdate && extraImagesUpdate.length > 0) {
+        const existingCount = await prisma.auctionImage.count({ where: { auctionId: id } });
+        for (let i = 0; i < extraImagesUpdate.length; i++) {
+          try {
+            const imageUrl = await imgbbService.uploadImage(extraImagesUpdate[i].buffer, extraImagesUpdate[i].originalname);
+            await prisma.auctionImage.create({
+              data: {
+                auctionId: id,
+                url: imageUrl,
+                filename: extraImagesUpdate[i].originalname,
+                isPrimary: false,
+                order: existingCount + i,
+              },
+            });
+            console.log(`✅ Imagen extra ${i + 6} actualizada en AuctionImage`);
+          } catch (err) {
+            console.error(`❌ Error subiendo imagen extra ${i + 6}:`, err);
+          }
+        }
+      }
 
       // Registrar actividad
       await this.activityLog.log({

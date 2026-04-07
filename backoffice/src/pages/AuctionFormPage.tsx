@@ -39,7 +39,9 @@ const schema = yup.object({
     .number()
     .positive('Debe ser un valor positivo')
     .required('Precio inicial requerido'),
+  startDate: yup.string().nullable(),
   endDate: yup.string().required('Fecha de finalización requerida'),
+  closingTime: yup.string().nullable(),
   status: yup.string().oneOf(['DRAFT', 'PUBLISHED']).default('DRAFT'),
   mainImageFile: yup.mixed().nullable(), // Archivo de imagen principal
   secondaryImages: yup.mixed().nullable(), // Archivos de imágenes secundarias
@@ -87,13 +89,19 @@ export default function AuctionFormPage() {
         location: auction.location || '',
         currency: auction.currency || 'ARS',
         startingPrice: Number(auction.startingPrice),
+        startDate: auction.startDate ? (() => {
+          const date = new Date(auction.startDate);
+          const offset = date.getTimezoneOffset();
+          const localDate = new Date(date.getTime() - offset * 60 * 1000);
+          return localDate.toISOString().split('T')[0];
+        })() : '',
         endDate: (() => {
           const date = new Date(auction.endDate);
-          // Ajustar para timezone local
           const offset = date.getTimezoneOffset();
           const localDate = new Date(date.getTime() - offset * 60 * 1000);
           return localDate.toISOString().split('T')[0];
         })(),
+        closingTime: auction.closingTime || '',
         status: auction.status,
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
@@ -261,13 +269,13 @@ export default function AuctionFormPage() {
             )}
 
             <FileUpload
-              label="Imágenes secundarias (hasta 5)"
+              label="Imágenes secundarias (hasta 20)"
               accept="image/*"
               multiple={true}
-              maxFiles={5}
+              maxFiles={20}
               onFilesChange={(files) => setValue('secondaryImages', files)}
               disabled={loading}
-              description="Sube hasta 5 imágenes adicionales de la subasta"
+              description="Sube hasta 20 imágenes adicionales de la subasta"
               showPreview={true}
             />
             {errors.secondaryImages && (
@@ -382,6 +390,18 @@ export default function AuctionFormPage() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="startDate">Fecha de inicio</Label>
+                <Input
+                  id="startDate"
+                  type="date"
+                  {...register('startDate')}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
                 <Label htmlFor="endDate">Fecha de finalización</Label>
                 <Input
                   id="endDate"
@@ -394,6 +414,20 @@ export default function AuctionFormPage() {
                     {String(errors.endDate.message)}
                   </p>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="closingTime">Horario de cierre</Label>
+                <Input
+                  id="closingTime"
+                  type="time"
+                  {...register('closingTime')}
+                  disabled={loading}
+                  placeholder="11:00"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Ej: 11:00 (se mostrará como "Cierre: 11:00 hs")
+                </p>
               </div>
             </div>
 

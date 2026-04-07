@@ -104,16 +104,19 @@ export class PublicController {
             secondaryImage5: true,
             pdfUrl: true,
             youtubeUrl: true,
-            auctionLink: true, // Enlace oficial de la subasta
-            details: true, // Detalles técnicos en HTML
+            auctionLink: true,
+            details: true,
             type: true,
             isFeatured: true,
+            startDate: true,
+            closingTime: true,
             images: {
-              where: { isPrimary: true },
               select: {
                 url: true,
+                isPrimary: true,
+                order: true,
               },
-              take: 1,
+              orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
             },
             _count: {
               select: { bids: true },
@@ -239,16 +242,19 @@ export class PublicController {
           secondaryImage5: true,
           pdfUrl: true,
           youtubeUrl: true,
-          auctionLink: true, // Enlace oficial de la subasta
-          details: true, // Detalles técnicos en HTML
+          auctionLink: true,
+          details: true,
           type: true,
           isFeatured: true,
           metadata: true,
+          startDate: true,
+          closingTime: true,
           images: {
             select: {
               id: true,
               url: true,
               isPrimary: true,
+              order: true,
             },
             orderBy: [{ isPrimary: 'desc' }, { order: 'asc' }],
           },
@@ -271,6 +277,7 @@ export class PublicController {
         startingPrice: auction.startingPrice ? Number(auction.startingPrice) : 0,
         currentPrice: auction.currentPrice ? Number(auction.currentPrice) : Number(auction.startingPrice) || 0,
         details: auction.details ? (typeof auction.details === 'string' ? auction.details : JSON.stringify(auction.details)) : null,
+        closingTime: (auction as any).closingTime || null,
       };
 
       res.json({

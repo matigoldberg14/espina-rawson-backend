@@ -18,14 +18,12 @@ const contentValidation = [
   body('value')
     .isString()
     .trim()
-    .notEmpty()
-    .withMessage('El valor es requerido'),
+    .withMessage('El valor debe ser texto'),
   body('description').optional().isString().trim(),
   body('section')
+    .optional()
     .isString()
-    .trim()
-    .notEmpty()
-    .withMessage('La sección es requerida'),
+    .trim(),
 ];
 
 const idValidation = [
