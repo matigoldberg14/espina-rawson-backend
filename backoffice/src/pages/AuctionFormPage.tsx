@@ -49,6 +49,7 @@ const schema = yup.object({
   youtubeUrl: yup.string().url('Debe ser una URL válida').nullable(),
   auctionLink: yup.string().url('Debe ser una URL válida').nullable(),
   details: yup.string().nullable(),
+  termsAndConditions: yup.string().nullable(),
   isFeatured: yup.boolean().default(false),
 });
 
@@ -106,6 +107,7 @@ export default function AuctionFormPage() {
         youtubeUrl: auction.youtubeUrl || '',
         auctionLink: auction.auctionLink || '',
         details: auction.details || '',
+        termsAndConditions: auction.termsAndConditions || '',
         isFeatured: auction.isFeatured || false,
         mainImageFile: null,
         secondaryImages: null,
@@ -341,6 +343,20 @@ export default function AuctionFormPage() {
               error={errors.details ? String(errors.details.message) : undefined}
               description="Usa las herramientas del editor para dar formato al texto. Los detalles aparecerán en la pestaña 'Detalles Técnicos' del frontend."
             />
+
+            <div className="space-y-2">
+              <Label htmlFor="termsAndConditions">Términos y Condiciones (específicos de esta subasta)</Label>
+              <textarea
+                id="termsAndConditions"
+                className="w-full min-h-[120px] rounded-md border border-input bg-transparent px-3 py-2 text-sm resize-y"
+                placeholder="Dejá vacío para usar los términos y condiciones globales configurados en Ajustes. Si completás este campo, se mostrarán estos términos específicos para esta subasta."
+                {...register('termsAndConditions')}
+                disabled={loading}
+              />
+              <p className="text-xs text-muted-foreground">
+                Si dejás este campo vacío, se usarán los términos globales de Configuración → Subastas.
+              </p>
+            </div>
 
             <div className="flex items-center space-x-2">
               <input

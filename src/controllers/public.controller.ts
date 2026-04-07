@@ -249,6 +249,7 @@ export class PublicController {
           metadata: true,
           startDate: true,
           closingTime: true,
+          termsAndConditions: true,
           images: {
             select: {
               id: true,
