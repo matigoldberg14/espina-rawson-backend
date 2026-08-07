@@ -156,13 +156,10 @@ export class AuctionController {
         details,
       } = req.body;
 
-      // Procesar archivos subidos con ImgBB
-      const files = req.files as Express.Multer.File[];
-      console.log('🔍 DEBUG - Files received:', files);
-      console.log(
-        '🔍 DEBUG - Files length:',
-        files ? files.length : 'No files'
-      );
+      // Procesar archivos: mainImage, secondaryImages y pdfFile van por campos separados
+      const files = (req.files as Express.Multer.File[]) || [];
+      console.log('🔍 DEBUG - Files received:', files.map(f => ({ name: f.originalname, field: f.fieldname, type: f.mimetype })));
+
       let processedMainImage = mainImageUrl;
       let processedSecondaryImages: Record<string, string | undefined> = {
         secondaryImage1,
@@ -172,69 +169,75 @@ export class AuctionController {
         secondaryImage5,
       };
       let processedPdfUrl = pdfUrl;
+      let hasNewSecondaryImages = false;
 
-      if (files && files.length > 0) {
+      if (files.length > 0) {
         try {
-          // Procesar imágenes con ImgBB
-          const imageFiles = files.filter((file) =>
-            file.mimetype.startsWith('image/')
-          );
-          
-          if (imageFiles.length > 0) {
-            console.log(`📤 Subiendo ${imageFiles.length} imágenes a ImgBB...`);
-            
-            // Subir imagen principal (primera imagen)
-            const mainImageUrl = await imgbbService.uploadImage(
-              imageFiles[0].buffer,
-              imageFiles[0].originalname
-            );
-            processedMainImage = mainImageUrl;
-            console.log('✅ Imagen principal subida:', mainImageUrl);
+          // Imagen principal: solo si se envió el campo mainImage (o legacy 'files' como fallback)
+          const mainFile =
+            files.find((f) => f.fieldname === 'mainImage' && f.mimetype.startsWith('image/')) ||
+            // Compatibilidad: si vienen todas como 'files', la primera imagen es la principal
+            (files.some((f) => f.fieldname === 'files')
+              ? files.find((f) => f.fieldname === 'files' && f.mimetype.startsWith('image/'))
+              : undefined);
 
-            // Subir imágenes secundarias (2-5 en campos legacy, 6-20 en AuctionImage)
-            const secondaryImages = imageFiles.slice(1, 21);
-            for (let i = 0; i < Math.min(secondaryImages.length, 5); i++) {
-              const file = secondaryImages[i];
-              const fieldName = `secondaryImage${i + 1}`;
-              const imageUrl = await imgbbService.uploadImage(file.buffer, file.originalname);
-              processedSecondaryImages[fieldName] = imageUrl;
-              console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
-            }
-            // Imágenes 6-20 se guardan en AuctionImage después de crear la subasta
-            if (secondaryImages.length > 5) {
-              (req as any)._extraImages = secondaryImages.slice(5);
+          if (mainFile && mainFile.fieldname === 'mainImage') {
+            processedMainImage = await imgbbService.uploadImage(mainFile.buffer, mainFile.originalname);
+            console.log('✅ Imagen principal subida:', processedMainImage);
+          }
+
+          // Imágenes secundarias: campo secondaryImages (o resto de 'files' si es legacy)
+          let secondaryFiles = files.filter(
+            (f) => f.fieldname === 'secondaryImages' && f.mimetype.startsWith('image/')
+          );
+
+          // Fallback legacy: si todo vino como 'files', secundarias = todas menos la primera
+          if (secondaryFiles.length === 0 && files.some((f) => f.fieldname === 'files')) {
+            const allLegacyImages = files.filter(
+              (f) => f.fieldname === 'files' && f.mimetype.startsWith('image/')
+            );
+            if (mainFile && mainFile.fieldname === 'files') {
+              // Primera = principal, resto = secundarias
+              processedMainImage = await imgbbService.uploadImage(mainFile.buffer, mainFile.originalname);
+              console.log('✅ Imagen principal (legacy) subida:', processedMainImage);
+              secondaryFiles = allLegacyImages.slice(1);
+            } else {
+              secondaryFiles = allLegacyImages;
             }
           }
 
-          // Procesar PDF - subir a Cloudinary
-          console.log('🔍 Buscando PDF entre archivos...');
-          console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
+          if (secondaryFiles.length > 0) {
+            hasNewSecondaryImages = true;
+            console.log(`📤 Subiendo ${secondaryFiles.length} imágenes secundarias a ImgBB...`);
+            for (let i = 0; i < Math.min(secondaryFiles.length, 5); i++) {
+              const imageUrl = await imgbbService.uploadImage(
+                secondaryFiles[i].buffer,
+                secondaryFiles[i].originalname
+              );
+              processedSecondaryImages[`secondaryImage${i + 1}`] = imageUrl;
+              console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
+            }
+            if (secondaryFiles.length > 5) {
+              (req as any)._extraImages = secondaryFiles.slice(5);
+            }
+          }
+
+          // PDF
           const pdfFile = files.find(
-            (file) => file.mimetype === 'application/pdf'
+            (f) =>
+              f.mimetype === 'application/pdf' &&
+              (f.fieldname === 'pdfFile' || f.fieldname === 'files')
           );
           if (pdfFile) {
-            console.log('📄 PDF encontrado! Subiendo a Cloudinary...');
-            console.log(`  - Nombre: ${pdfFile.originalname}`);
-            console.log(`  - Tamaño: ${pdfFile.size} bytes`);
-            console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
-            
             try {
-              const cloudinaryUrl = await cloudinaryService.uploadPdf(
-                pdfFile.buffer,
-                pdfFile.originalname
-              );
-              processedPdfUrl = cloudinaryUrl;
-              console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
+              processedPdfUrl = await cloudinaryService.uploadPdf(pdfFile.buffer, pdfFile.originalname);
+              console.log('✅ PDF subido a Cloudinary:', processedPdfUrl);
             } catch (cloudinaryError) {
               console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
-              console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
             }
-          } else {
-            console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos:', error);
-          console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
         }
       }
 
@@ -255,11 +258,11 @@ export class AuctionController {
           metadata,
           youtubeUrl,
           mainImageUrl: processedMainImage,
-          secondaryImage1: processedSecondaryImages.secondaryImage1,
-          secondaryImage2: processedSecondaryImages.secondaryImage2,
-          secondaryImage3: processedSecondaryImages.secondaryImage3,
-          secondaryImage4: processedSecondaryImages.secondaryImage4,
-          secondaryImage5: processedSecondaryImages.secondaryImage5,
+          secondaryImage1: hasNewSecondaryImages ? processedSecondaryImages.secondaryImage1 : secondaryImage1,
+          secondaryImage2: hasNewSecondaryImages ? processedSecondaryImages.secondaryImage2 : secondaryImage2,
+          secondaryImage3: hasNewSecondaryImages ? processedSecondaryImages.secondaryImage3 : secondaryImage3,
+          secondaryImage4: hasNewSecondaryImages ? processedSecondaryImages.secondaryImage4 : secondaryImage4,
+          secondaryImage5: hasNewSecondaryImages ? processedSecondaryImages.secondaryImage5 : secondaryImage5,
           pdfUrl: processedPdfUrl,
           auctionLink,
           details: details || null,
@@ -336,87 +339,84 @@ export class AuctionController {
         details,
       } = req.body;
 
-      // Procesar archivos subidos con ImgBB
-      const files = req.files as Express.Multer.File[];
-      console.log('🔍 DEBUG - Files received:', files);
-      console.log(
-        '🔍 DEBUG - Files length:',
-        files ? files.length : 'No files'
-      );
-      let processedMainImage = mainImageUrl;
-      let processedSecondaryImages: Record<string, string | undefined> = {
-        secondaryImage1,
-        secondaryImage2,
-        secondaryImage3,
-        secondaryImage4,
-        secondaryImage5,
-      };
-      let processedPdfUrl = pdfUrl;
+      // Procesar archivos: mainImage, secondaryImages y pdfFile van por campos separados
+      const files = (req.files as Express.Multer.File[]) || [];
+      console.log('🔍 DEBUG - Files received (update):', files.map(f => ({ name: f.originalname, field: f.fieldname, type: f.mimetype })));
 
-      if (files && files.length > 0) {
+      let processedMainImage: string | undefined = undefined;
+      let processedSecondaryImages: Record<string, string | undefined> = {};
+      let processedPdfUrl: string | undefined = undefined;
+      let hasNewMainImage = false;
+      let hasNewSecondaryImages = false;
+      let hasNewPdf = false;
+
+      if (files.length > 0) {
         try {
-          // Procesar imágenes con ImgBB
-          const imageFiles = files.filter((file) =>
-            file.mimetype.startsWith('image/')
+          // Imagen principal: SOLO si se envió el campo mainImage
+          const mainFile = files.find(
+            (f) => f.fieldname === 'mainImage' && f.mimetype.startsWith('image/')
           );
-          
-          if (imageFiles.length > 0) {
-            console.log(`📤 Subiendo ${imageFiles.length} imágenes a ImgBB...`);
-            
-            // Subir imagen principal (primera imagen)
-            const mainImageUrl = await imgbbService.uploadImage(
-              imageFiles[0].buffer,
-              imageFiles[0].originalname
-            );
-            processedMainImage = mainImageUrl;
-            console.log('✅ Imagen principal subida:', mainImageUrl);
+          if (mainFile) {
+            processedMainImage = await imgbbService.uploadImage(mainFile.buffer, mainFile.originalname);
+            hasNewMainImage = true;
+            console.log('✅ Imagen principal actualizada:', processedMainImage);
+          }
 
-            // Subir imágenes secundarias (2-5 en campos legacy, 6-20 en AuctionImage)
-            const secondaryImages = imageFiles.slice(1, 21);
-            for (let i = 0; i < Math.min(secondaryImages.length, 5); i++) {
-              const file = secondaryImages[i];
-              const fieldName = `secondaryImage${i + 1}`;
-              const imageUrl = await imgbbService.uploadImage(file.buffer, file.originalname);
-              processedSecondaryImages[fieldName] = imageUrl;
+          // Imágenes secundarias: SOLO si se envió el campo secondaryImages
+          let secondaryFiles = files.filter(
+            (f) => f.fieldname === 'secondaryImages' && f.mimetype.startsWith('image/')
+          );
+
+          // Fallback legacy: si todo vino como 'files' sin mainImage separado
+          if (
+            !mainFile &&
+            secondaryFiles.length === 0 &&
+            files.some((f) => f.fieldname === 'files')
+          ) {
+            // En legacy, si hay mainImageUrl en body no tocamos principal; todas van a secundarias
+            // Si no hay mainImageUrl, primera = principal (solo en create; en update preferimos no pisar)
+            secondaryFiles = files.filter(
+              (f) => f.fieldname === 'files' && f.mimetype.startsWith('image/')
+            );
+          }
+
+          if (secondaryFiles.length > 0) {
+            hasNewSecondaryImages = true;
+            console.log(`📤 Subiendo ${secondaryFiles.length} imágenes secundarias a ImgBB...`);
+            for (let i = 0; i < Math.min(secondaryFiles.length, 5); i++) {
+              const imageUrl = await imgbbService.uploadImage(
+                secondaryFiles[i].buffer,
+                secondaryFiles[i].originalname
+              );
+              processedSecondaryImages[`secondaryImage${i + 1}`] = imageUrl;
               console.log(`✅ Imagen secundaria ${i + 1} subida:`, imageUrl);
             }
-            if (secondaryImages.length > 5) {
-              (req as any)._extraImages = secondaryImages.slice(5);
+            if (secondaryFiles.length > 5) {
+              (req as any)._extraImages = secondaryFiles.slice(5);
             }
           }
 
-          // Procesar PDF - subir a Cloudinary
-          console.log('🔍 Buscando PDF entre archivos...');
-          console.log('📋 Archivos recibidos:', files.map(f => ({ name: f.originalname, mimetype: f.mimetype, size: f.size })));
+          // PDF
           const pdfFile = files.find(
-            (file) => file.mimetype === 'application/pdf'
+            (f) =>
+              f.mimetype === 'application/pdf' &&
+              (f.fieldname === 'pdfFile' || f.fieldname === 'files')
           );
           if (pdfFile) {
-            console.log('📄 PDF encontrado! Subiendo a Cloudinary...');
-            console.log(`  - Nombre: ${pdfFile.originalname}`);
-            console.log(`  - Tamaño: ${pdfFile.size} bytes`);
-            console.log(`  - Buffer length: ${pdfFile.buffer?.length || 0} bytes`);
-            
             try {
-              const cloudinaryUrl = await cloudinaryService.uploadPdf(
-                pdfFile.buffer,
-                pdfFile.originalname
-              );
-              processedPdfUrl = cloudinaryUrl;
-              console.log('✅ PDF subido exitosamente a Cloudinary:', cloudinaryUrl);
+              processedPdfUrl = await cloudinaryService.uploadPdf(pdfFile.buffer, pdfFile.originalname);
+              hasNewPdf = true;
+              console.log('✅ PDF actualizado en Cloudinary:', processedPdfUrl);
             } catch (cloudinaryError) {
               console.error('❌ Error subiendo PDF a Cloudinary:', cloudinaryError);
-              console.warn('⚠️ Continuando sin subir PDF a Cloudinary. Verifique que las variables de entorno de Cloudinary estén configuradas.');
             }
-          } else {
-            console.log('⚠️ No se encontró ningún archivo PDF entre los archivos subidos');
           }
         } catch (error) {
           console.error('❌ Error subiendo archivos:', error);
-          console.warn('⚠️ Continuando sin subir archivos. Verifique que las API keys estén configuradas.');
         }
       }
 
+      // Solo actualizar campos de imagen si realmente se subieron archivos nuevos
       const updateData: any = {
         title,
         description,
@@ -431,16 +431,23 @@ export class AuctionController {
         status,
         metadata,
         youtubeUrl,
-        mainImageUrl: processedMainImage,
-        secondaryImage1: processedSecondaryImages.secondaryImage1,
-        secondaryImage2: processedSecondaryImages.secondaryImage2,
-        secondaryImage3: processedSecondaryImages.secondaryImage3,
-        secondaryImage4: processedSecondaryImages.secondaryImage4,
-        secondaryImage5: processedSecondaryImages.secondaryImage5,
-        pdfUrl: processedPdfUrl,
         auctionLink,
         details: details || null,
       };
+
+      if (hasNewMainImage) {
+        updateData.mainImageUrl = processedMainImage;
+      }
+      if (hasNewSecondaryImages) {
+        updateData.secondaryImage1 = processedSecondaryImages.secondaryImage1 || null;
+        updateData.secondaryImage2 = processedSecondaryImages.secondaryImage2 || null;
+        updateData.secondaryImage3 = processedSecondaryImages.secondaryImage3 || null;
+        updateData.secondaryImage4 = processedSecondaryImages.secondaryImage4 || null;
+        updateData.secondaryImage5 = processedSecondaryImages.secondaryImage5 || null;
+      }
+      if (hasNewPdf) {
+        updateData.pdfUrl = processedPdfUrl;
+      }
 
       const auction = await prisma.auction.update({
         where: { id },

@@ -151,21 +151,21 @@ export default function AuctionFormPage() {
       }
     });
 
-    // Agregar imagen principal
+    // Imagen principal (campo separado para que no se pise con las secundarias)
     if (data.mainImageFile && data.mainImageFile.length > 0) {
-      formData.append('files', data.mainImageFile[0]);
+      formData.append('mainImage', data.mainImageFile[0]);
     }
 
-    // Agregar imágenes secundarias
+    // Imágenes secundarias
     if (data.secondaryImages && data.secondaryImages.length > 0) {
       Array.from(data.secondaryImages).forEach((file: any) => {
-        formData.append('files', file);
+        formData.append('secondaryImages', file);
       });
     }
 
-    // Agregar PDF
+    // PDF
     if (data.pdfFile && data.pdfFile.length > 0) {
-      formData.append('files', data.pdfFile[0]);
+      formData.append('pdfFile', data.pdfFile[0]);
     }
 
     if (isEdit) {
