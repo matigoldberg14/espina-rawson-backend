@@ -261,9 +261,19 @@ export default function AuctionFormPage() {
               maxFiles={1}
               onFilesChange={(files) => setValue('mainImageFile', files)}
               disabled={loading}
-              description="Sube la imagen principal de la subasta (JPG, PNG, GIF, WebP)"
+              description="Esta es la foto que se muestra en la cartelera. Subí solo acá la del frente del conductor (u otra que quieras como principal)."
               showPreview={true}
             />
+            {isEdit && auction?.mainImageUrl && !watch('mainImageFile') && (
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">Imagen principal actual:</p>
+                <img
+                  src={auction.mainImageUrl}
+                  alt="Principal actual"
+                  className="h-32 w-auto rounded border object-contain bg-muted"
+                />
+              </div>
+            )}
             {errors.mainImageFile && (
               <p className="text-sm text-destructive">
                 {String(errors.mainImageFile.message)}

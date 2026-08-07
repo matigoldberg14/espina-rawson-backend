@@ -23,8 +23,10 @@ const handleFormDataRequest = (
   data: any
 ) => {
   if (data instanceof FormData) {
+    // No setear Content-Type manualmente: el browser agrega el boundary correcto
     return api[method](url, data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': undefined as any },
+      transformRequest: [(d) => d],
     });
   }
   return api[method](url, data);
